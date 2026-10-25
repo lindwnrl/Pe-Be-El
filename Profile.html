@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <title>Profile</title>
+</head>
+<body>
+    <header>
+        <a href="/Dashboard.html" class="logo">
+            <img src="/assets/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Homepage">
+        </a>
+        <nav>
+            <ul>
+                <li><a href="/Dashboard.html">Home</a></li>
+                <li><a href="/Menu.html">Menu</a></li>
+                <li><a href="/Kursi.html">Kursi</a></li>
+                <li><a href="/Profile.html">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+        <div class="card3">
+            <form class="form-profile">
+                <h1>Profile saya</h1>
+                <p>
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username"required>
+                </p>
+                <p>
+                    <label for="nama">Nama</label>
+                    <input type="text" name="nama" id="nama"required>
+                </p>
+                <p>
+                    <label for="email">Email</label>
+                    <input type="text" name="email" id="email"required>
+                </p>
+                <p>
+                    <label for="no_hp">No.Telepon</label>
+                    <input type="text" name="no_hp" id="no_hp">
+                </p>
+                
+                <p>
+                    <label for="jenis_kelamin">Jenis Kelamin</label>
+                    <span>
+                        <input type="radio" name="jenis_kelamin" id="laki-laki" value="laki-laki">
+                        <label for="laki-laki">Laki-laki</label>
+                        
+                        <input type="radio" name="jenis_kelamin" id="perempuan" value="perempuan">
+                        <label for="perempuan">Perempuan</label>
+                    </span>    
+                </p>
+                
+                <p>
+                    <label for="tanggal-lahir">Tanggal lahir</label>
+                    <input type="date" name="tanggal-lahir" id="tanggal-lahir">
+                </p>
+                <p>
+                     <button type="submit">Submit</button>    
+                </p>
+            </form>
+            <div class="photo-profile">
+                <img src="/assets/jokowi ganteng.png" alt="">
+                <label class="button">Ubah Gambar</label>
+            </div>
+        </div>
+</body>
+</html>
