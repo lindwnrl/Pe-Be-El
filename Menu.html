@@ -17,7 +17,7 @@
                 <li><a href="/Menu.html">Menu</a></li>
                 <li><a href="/Kursi.html">Kursi</a></li>
                 <li><a href="/Profile.html">Profile</a></li>
-            
+                
             </ul>
         </nav>
     </header>
@@ -27,139 +27,169 @@
             <h1>Silahkan pilih menu kesukaanmu</h1>
             <p>Dibuat dengan sepenuh hati</p>
             <span class="status-buka" aria-hidden="true">Buka hari ini  · 10.00 - 20.00</span>
-    </div>
-    <section class="menu-tools" aria-label="Cari dan filter menu">
-
-    <!-- Search bar -->
-    <label class="menu-search">
-        <span aria-hidden="true">⌕</span>
-        <input
-            id="menu-search"
-            type="search"
+        </div>
+        <section class="menu-tools" aria-label="Cari dan filter menu">
+            
+            
+            <label class="menu-search">
+                <span aria-hidden="true">⌕</span>
+                <input
+                id="menu-search"
+                type="search"
             placeholder="Cari nama menu..."
             aria-label="Cari nama menu"
         >
     </label>
-
-    <!-- Category dropdown -->
+    
+    
     <label class="menu-category">
         <span>Kategori:</span>
         <select id="menu-category">
-            <option value="Semua">Semua Kategori</option>
+            <option value="Semua">Semua</option>
             <option value="Bakso">Bakso</option>
             <option value="Mie Ayam">Mie Ayam</option>
             <option value="Minuman">Minuman</option>
             <option value="Tambahan">Tambahan</option>
         </select>
     </label>
-
-    </section>
+    
+</section>
 
 <p id="menu-empty" hidden>Menu tidak ditemukan.</p>
 
-    <div class="data-menu">
-        <div class="menu">
-            <article>
+<div class="data-menu">
+    <div class="menu" data-category="Bakso">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="/assets/image3.png" alt="">
-                <p>
-                    Bakso Solo Campur
-                </p>
-                <p>
-                    Rp 20.000
-                </p>
-            </article>
-        </div>
-        <div class="menu">
-            <article>
+            </div>
+            <p>
+                Bakso Solo Campur
+            </p>
+            <p>
+                Rp 20.000
+            </p>
+        </article>
+    </div>
+    <div class="menu" data-category="Bakso">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="/assets/image4.png" alt="">
-                <p>
-                    Bakso Solo Tanpa Tahu
-                </p>
-                <p>
-                    Rp 20.000
-                </p>
-            </article>
-        </div>
-        <div class="menu">
-            <article>
+            </div>
+            <p>
+                Bakso Solo Tanpa Tahu
+            </p>
+            <p>
+                Rp 20.000
+            </p>
+        </article>
+    </div>
+    <div class="menu" data-category="Tambahan">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="/assets/image5.png" alt="">
-                <p>
-                    Cilok 1 Porsi
-                </p>
-                <p>
-                    Rp 15.000
-                </p>
-            </article>
-        </div>
-        <div class="menu">
-            <article>
+            </div>
+            <p>
+                Cilok 1 Porsi
+            </p>
+            <p>
+                Rp 15.000
+            </p>
+        </article>
+    </div>
+    <div class="menu" data-category="Mie Ayam">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="assets/image1.png" alt="">
-                <p>
-                    Mie Ayam Mozarella
-                </p>
-                <p>
-                    Rp 15.000
-                </p>
-            </article>
-        </div>
-        <div class="menu">
-            <article>
+            </div>
+            <p>
+                Mie Ayam Mozarella
+            </p>
+            <p>
+                Rp 15.000
+            </p>
+        </article>
+    </div>
+    <div class="menu" data-category="Mie Ayam">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="/assets/image6.png" alt="">
-                <p>
-                    Mie Ayam Ceker
-                </p>
-                <p>
-                    Rp 15.000
-                </p>
-            </article>
-        </div>
-        <div class="menu">
-            <article>
+            </div>
+            <p>
+                Mie Ayam Ceker
+            </p>
+            <p>
+                Rp 15.000
+            </p>
+        </article>
+    </div>
+    <div class="menu" data-category="Mie Ayam">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="/assets/image7.png" alt="">
-                <p>
-                    Mie Ayam Original
-                </p>
-                <p>
-                    Rp 10.000
-                </p>
-            </article>
-        </div>
-        <div class="menu">
-            <article>
+            </div>
+            <p>
+                Mie Ayam Original
+            </p>
+            <p>
+                Rp 10.000
+            </p>
+        </article>
+    </div>
+    <div class="menu" data-category="Minuman">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="/assets/image8.png" alt="">
-                <p>
-                    Air Mineral
-                </p>
-                <p>
-                    Rp 4.000
-                </p>
-            </article>
-        </div>
-        <div class="menu">
-            <article>
+            </div>
+            <p>
+                Air Mineral
+            </p>
+            <p>
+                Rp 4.000
+            </p>
+        </article>
+    </div>
+    <div class="menu" data-category="Minuman">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="/assets/image9.png" alt="">
-                <p>
-                    Es Jeruk
-                </p>
-                <p>
-                    Rp 5.000
-                </p>
-            </article>
-        </div>
-        <div class="menu">
-            <article>
+            </div>
+            <p>
+                Es Jeruk
+            </p>
+            <p>
+                Rp 5.000
+            </p>
+        </article>
+    </div>
+    <div class="menu" data-category="Minuman">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
                 <img src="assets/image10.png" alt="">
-                <p>
-                    Es Teh
-                </p>
-                <p>
-                    Rp 4.000
+            </div>
+            <p>
+                Es Teh
+            </p>
+            <p>
+                Rp 4.000
                 </p>
             </article>
         </div>
-        <div class="menu">
+        <div class="menu" data-category="Tambahan">
             <article>
-                <img src="assets/image11.png" alt="">
+                <div class="ready-status">
+                    <span>Ready</span>
+                    <img src="assets/image11.png" alt="">
+                </div>
                 <p>
                     Ceker Ayam
                 </p>
@@ -168,9 +198,12 @@
                 </p>
             </article>
         </div>
-        <div class="menu">
+        <div class="menu" data-category="Tambahan">
             <article>
-                <img src="assets/image12.png" alt="">
+                <div class="ready-status">
+                    <span>Ready</span>
+                    <img src="assets/image12.png" alt="">
+                </div>
                 <p>
                     Pangsit Goreng
                 </p>
@@ -180,6 +213,7 @@
             </article>
         </div>
     </div>
-    </div>
+</div>
+<script src="/assets/js/menu.js"></script>
 </body>
 </html>

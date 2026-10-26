@@ -3,3 +3,6 @@
 ## Minggu-October-25
 Update tentang interface dari Profile , Dashboard dan sebagian dari Menu sesuai arahan Yudhistira Andhika
 namun belum di integrasi dengan Javascript.
+
+## Senin-October-26
+Update javascript di page menu dan profile.Dimana di bagian menu sudah ada fitur sorting-by-category dan di bagian profile ada perubahan photo-profile.
