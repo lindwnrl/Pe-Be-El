@@ -6,3 +6,6 @@ namun belum di integrasi dengan Javascript.
 
 ## Senin-October-26
 Update javascript di page menu dan profile.Dimana di bagian menu sudah ada fitur sorting-by-category dan di bagian profile ada perubahan photo-profile.
+
+## Rabu-October-28
+Add javascript ke menu dan sedikit penambahan interface untuk menu.Juga terdapat perubahan design untuk kursi disertai javascript-nya
