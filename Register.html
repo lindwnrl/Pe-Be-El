@@ -17,24 +17,78 @@
                     <img src="/assets/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="">
                 </div>
                 <h1>Register</h1>
-                <p>
-                    <h3>Username</h3>
-                    <input type="text" id="username" name="username" placeholder="Register" required>
-                </p>
-                <p>
-                    <h3>Password</h3>
-                    <input type="password" id="password" name="password" placeholder="Password" required>
-                </p>
-                <p>
-                    <h3>Confirm Password</h3>
-                    <input type="password" name="password" id="password" placeholder="Confirm Password" required>
-                </p>
-                <div>
-                    <a href="/Login.html" class="button">Daftar</a>
-                </div>
+                <form id="register-form" novalidate>
+                    <p>
+                        <h3>Username</h3>
+                        <input type="text" id="username" name="username" placeholder="Username" required>
+                    </p>
+                    <p>
+                        <h3>Password</h3>
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                    </p>
+                    <p>
+                        <h3>Confirm Password</h3>
+                        <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password" required>
+                    </p>
+                    <p id="register-error" role="alert" aria-live="polite" style="color:#b91c1c;font-size:0.88rem;display:none;"></p>
+                    <div>
+                        <button type="submit" class="button">Daftar</button>
+                    </div>
+                </form>
             </div>
 
         </section>
     </main>
+
+    <script src="/assets/js/session.js"></script>
+    <script>
+        document.getElementById("register-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const username  = document.getElementById("username").value.trim();
+            const password  = document.getElementById("password").value;
+            const confirm   = document.getElementById("confirm-password").value;
+            const errorEl   = document.getElementById("register-error");
+
+            // Validate fields.
+            if (!username || !password) {
+                errorEl.textContent = "Username dan password wajib diisi.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            if (password !== confirm) {
+                errorEl.textContent = "Password dan konfirmasi password tidak cocok.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            if (password.length < 6) {
+                errorEl.textContent = "Password minimal 6 karakter.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            // Persist to localStorage so Login.html can verify.
+            const users = JSON.parse(localStorage.getItem("ninaRasaUsers") || "[]");
+
+            if (users.find(function (u) { return u.username === username; })) {
+                errorEl.textContent = "Username sudah terdaftar. Silakan gunakan username lain.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            users.push({ username: username, password: password, nama: "", email: "" });
+            localStorage.setItem("ninaRasaUsers", JSON.stringify(users));
+
+            errorEl.style.display = "none";
+
+            sessionStorage.setItem(
+                "ninaRasaFlash",
+                "Registrasi berhasil! Silakan masuk dengan akun Anda."
+            );
+            window.location.href = "/Login.html";
+        });
+    </script>
 </body>
 </html>

@@ -14,9 +14,14 @@
         <nav>
             <ul>
                 <li><a href="/Dashboard.html">Home</a></li>
-                <li><a href="/Menu.html">Menu</a></li>
+                <li><a href="/Menu.html" id="nav-menu">Menu</a></li>
                 <li><a href="/Kursi.html">Kursi</a></li>
                 <li><a href="/Profile.html">Profile</a></li>
+                <li>
+                    <a href="#" id="logout-btn"
+                       style="color:#b45309;"
+                       title="Keluar dari sesi saat ini">Logout</a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -25,15 +30,15 @@
                 <h1>Profile saya</h1>
                 <p>
                     <label for="username">Username</label>
-                    <input type="text" name="username" id="username"required>
+                    <input type="text" name="username" id="username" required>
                 </p>
                 <p>
                     <label for="nama">Nama</label>
-                    <input type="text" name="nama" id="nama"required>
+                    <input type="text" name="nama" id="nama" required>
                 </p>
                 <p>
                     <label for="email">Email</label>
-                    <input type="text" name="email" id="email"required>
+                    <input type="text" name="email" id="email" required>
                 </p>
                 <p>
                     <label for="no_hp">No.Telepon</label>
@@ -56,15 +61,42 @@
                     <input type="date" name="tanggal-lahir" id="tanggal-lahir">
                 </p>
                 <p>
-                     <button type="submit">Submit</button>    
+                     <button type="submit">Simpan Profil</button>    
                 </p>
             </form>
             <div class="photo-profile">
                 <img id="profile-picture" src="/assets/documentasi/jokowi ganteng.png" alt="">
-                <input type="file" id="picture-input" accept="image/*"hidden>
+                <input type="file" id="picture-input" accept="image/*" hidden>
                 <label for="picture-input" class="button">Ubah Gambar</label>
             </div>
         </div>
-        <script src="/assets/js/profile.js"></script>
+
+    <!-- session.js MUST be loaded before profile.js -->
+    <script src="/assets/js/session.js"></script>
+    <script>
+        // Guard the Menu nav link on this page too.
+        document.getElementById("nav-menu").addEventListener("click", function (e) {
+            e.preventDefault();
+            if (!hasSeat()) {
+                sessionStorage.setItem(
+                    "ninaRasaFlash",
+                    "Silakan pilih kursi/meja terlebih dahulu sebelum memesan makanan."
+                );
+                window.location.href = "/Kursi.html";
+            } else {
+                window.location.href = "/Menu.html";
+            }
+        });
+
+        // Logout: clear session and redirect to Dashboard.
+        document.getElementById("logout-btn").addEventListener("click", function (e) {
+            e.preventDefault();
+            if (confirm("Yakin ingin keluar?")) {
+                clearSession();
+                window.location.href = "/Dashboard.html";
+            }
+        });
+    </script>
+    <script src="/assets/js/profile.js"></script>
 </body>
 </html>

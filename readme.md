@@ -9,3 +9,6 @@ Update javascript di page menu dan profile.Dimana di bagian menu sudah ada fitur
 
 ## Rabu-October-28
 Add javascript ke menu dan sedikit penambahan interface untuk menu.Juga terdapat perubahan design untuk kursi disertai javascript-nya
+
+## Kamis-October-29
+Add Session untuk seluruh fitur

@@ -15,7 +15,7 @@
         <nav>
             <ul>
                 <li><a href="/Dashboard.html">Home</a></li>
-                <li><a href="/Menu.html">Menu</a></li>
+                <li><a href="/Menu.html" id="nav-menu">Menu</a></li>
                 <li><a href="/Kursi.html">Kursi</a></li>
                 <li><a href="/Profile.html">Profile</a></li>
             </ul>
@@ -50,19 +50,20 @@
             <section>
 
                 <div class="best-menu">
-                    <a href="/Menu.html">
+                    <!-- Menu links are handled by JS to enforce seat-guard -->
+                    <a href="#" class="menu-link">
                         <article>
                             <img src="/assets/documentasi/image1.png" alt="">
                             <h3>Mie Ayam Mozarella</h3>
                         </article>
                     </a>
-                    <a href="/Menu.html">
+                    <a href="#" class="menu-link">
                         <article>
                             <img src="/assets/documentasi/image2.png" alt="">
                             <h3>Mie Ayam Ceker</h3>
                         </article>
                     </a>
-                    <a href="/Menu.html">
+                    <a href="#" class="menu-link">
                         <article>
                             <img src="/assets/documentasi/image3.png" alt="">
                             <h3>Bakso Solo Campur</h3>
@@ -72,5 +73,41 @@
             </section>
         
     </main>
+
+    <script src="/assets/js/session.js"></script>
+    <script>
+        // Show any flash messages (e.g. after logout).
+        showFlashMessage();
+
+        /**
+         * Intercept navigation to Menu.html and enforce the seat guard.
+         * If no seat is booked, redirect to Kursi.html with a message.
+         */
+        function handleMenuNavigation(event) {
+            event.preventDefault();
+
+            if (!hasSeat()) {
+                sessionStorage.setItem(
+                    "ninaRasaFlash",
+                    "Silakan pilih kursi/meja terlebih dahulu sebelum memesan makanan."
+                );
+                window.location.href = "/Kursi.html";
+                return;
+            }
+
+            window.location.href = "/Menu.html";
+        }
+
+        // Apply guard to the nav "Menu" link.
+        const navMenuLink = document.getElementById("nav-menu");
+        if (navMenuLink) {
+            navMenuLink.addEventListener("click", handleMenuNavigation);
+        }
+
+        // Apply guard to the food card links in the best-menu section.
+        document.querySelectorAll(".menu-link").forEach(function (link) {
+            link.addEventListener("click", handleMenuNavigation);
+        });
+    </script>
 </body>
 </html>
