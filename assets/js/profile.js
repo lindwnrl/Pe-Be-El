@@ -95,7 +95,7 @@ profileForm.addEventListener("submit", function (event) {
         );
         // Redirect to Dashboard after profile is complete.
         setTimeout(function () {
-            window.location.href = "/Dashboard.html";
+            window.location.href = "/Dashboard.php";
         }, 1500);
     } else {
         showSuccessMessage(
@@ -139,5 +139,5 @@ function showSuccessMessage(text) {
     }, 6000);
 }
 
-// Show any pending flash (e.g., redirected here from Menu.html).
+// Show any pending flash (e.g., redirected here from Menu.php).
 showFlashMessage();

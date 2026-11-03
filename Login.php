@@ -1,0 +1,101 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="login-container">
+
+        <section class="login-card">
+            <div class="login-header">
+                <div class="image">
+                    <img src="/assets//documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="">
+                </div>
+                <h1>Login</h1>
+                <form id="login-form" novalidate>
+                    <p>
+                        <h3>Login</h3>
+                        <input type="text" id="username" name="username" placeholder="Username" required>
+                    </p>
+                    <p>
+                        <h3>Password</h3>
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                    </p>
+                    <p id="login-error" role="alert" aria-live="polite" style="color:#b91c1c;font-size:0.88rem;display:none;"></p>
+                    <p>
+                        Belum ada akun? <a href="/Register.php">Daftar yuk!</a>
+                    </p><br>
+                    <div>
+                        <button type="submit" class="button">Masuk</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="/assets/js/session.js"></script>
+    <script>
+        // Show any flash from a previous redirect.
+        showFlashMessage();
+
+        // If already logged in, skip login page.
+        if (isLoggedIn()) {
+            window.location.href = "/Dashboard.php";
+        }
+
+        document.getElementById("login-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            const errorEl  = document.getElementById("login-error");
+
+            if (!username || !password) {
+                errorEl.textContent = "Username dan password wajib diisi.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            // ── Real auth: verify credentials against the `akun` table ───
+            errorEl.style.display = "none";
+
+            fetch("/api/login.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: username, password: password })
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (!data || !data.ok) {
+                        errorEl.textContent = (data && data.error) || "Username atau password salah.";
+                        errorEl.style.display = "block";
+                        return;
+                    }
+
+                    // Mark user as logged in in session (same shape as before).
+                    updateSession({
+                        user: {
+                            isLoggedIn: true,
+                            username:   username,
+                            nama:       "",
+                            email:      ""
+                        }
+                    });
+
+                    window.location.href = "/Profile.php";
+                })
+                .catch(function () {
+                    errorEl.textContent = "Login gagal. Silakan coba lagi.";
+                    errorEl.style.display = "block";
+                });
+        });
+    </script>
+</body>
+</html>

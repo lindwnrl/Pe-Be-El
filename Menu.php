@@ -1,0 +1,387 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <header>
+        <a href="/Dashboard.php" class="logo">
+            <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Homepage">
+        </a>
+        <nav>
+            <ul>
+                <li><a href="/Dashboard.php">Home</a></li>
+                <li><a href="/Menu.php">Menu</a></li>
+                <li><a href="/Kursi.php">Kursi</a></li>
+                <li id="nav-profile-item" style="display:none;"><a href="/Profile.php">Profile</a></li>
+                <li id="nav-auth-item"><!-- filled by JS --></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="menu-info">
+        <div class="welcoming-info">
+            <p>DAPUR NINA RASA</p>
+            <h1>Silahkan pilih menu kesukaanmu</h1>
+            <p>Dibuat dengan sepenuh hati</p>
+            <span class="status-buka" aria-hidden="true">Buka hari ini  · 10.00 - 20.00</span>
+        </div>
+        <section class="menu-tools" aria-label="Cari dan filter menu">
+            
+            
+            <label class="menu-search">
+                <span aria-hidden="true">⌕</span>
+                <input id="menu-search" type="search" placeholder="Cari nama menu..." aria-label="Cari nama menu">
+            </label>
+    
+
+    <label class="menu-category">
+        <span>Kategori:</span>
+        <select id="menu-category">
+            <option value="Semua">Semua</option>
+            <option value="Bakso">Bakso</option>
+            <option value="Mie Ayam">Mie Ayam</option>
+            <option value="Minuman">Minuman</option>
+            <option value="Tambahan">Tambahan</option>
+        </select>
+    </label>
+    
+</section>
+
+<p id="menu-empty" hidden>Menu tidak ditemukan.</p>
+
+<div class="data-menu">
+    <div class="menu" data-category="Bakso" data-price="20000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="/assets/documentasi/image3.png" alt="">
+            </div>
+            <p>
+                Bakso Solo Campur
+            </p>
+            <div class="buy-row">
+                <p>
+                    Rp 20.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Bakso Solo Campur" >+</button></div>
+            </div>
+        </article>
+    </div>
+    <div class="menu" data-category="Bakso" data-price="20000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="/assets/documentasi/image4.png" alt="">
+            </div>
+            <p>
+                Bakso Solo Tanpa Tahu
+            </p>
+            <div class="buy-row">
+                <p>
+                    Rp 20.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Bakso Solo Tanpa Tahu" >+</button></div>
+            </div>
+        </article>
+    </div>
+    <div class="menu" data-category="Tambahan" data-price="15000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="/assets/documentasi/image5.png" alt="">
+            </div>
+            <p>
+                Cilok 1 Porsi
+            </p>
+            <div class="buy-row">
+                <p>
+                    Rp 15.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Cilok 1 Porsi" >+</button></div>
+            </div>
+        </article>
+    </div>
+    <div class="menu" data-category="Mie Ayam" data-price="20000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="assets/documentasi/image1.png" alt="">
+            </div>
+            <p>
+                Mie Ayam Mozarella
+            </p>
+            <div class="buy-row">
+                <p>
+                    Rp 15.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Mie Ayam Mozarella" >+</button></div>
+            </div>
+        </article>
+    </div>
+    <div class="menu" data-category="Mie Ayam" data-price="15000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="/assets/documentasi/image6.png" alt="">
+            </div>
+            <p>
+                Mie Ayam Ceker
+            </p>
+            <div class="buy-row">
+                <p>        
+                    Rp 15.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Mie Ayam Ceker" >+</button></div>
+            </div>
+        </article>
+    </div>
+    <div class="menu" data-category="Mie Ayam" data-price="10000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="/assets/documentasi/image7.png" alt="">
+            </div>
+            <p>
+                Mie Ayam Original
+            </p>
+            <div class="buy-row">
+                <p>
+                    Rp 10.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Mie Ayam Original" >+</button></div>
+            </div>
+        </article>
+    </div>
+    <div class="menu" data-category="Minuman" data-price="4000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="/assets/documentasi/image8.png" alt="">
+            </div>
+            <p>
+                Air Mineral
+            </p>
+            <div class="buy-row">
+                <p>
+                    Rp 4.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Air Mineral" >+</button></div>
+            </div>
+        </article>
+    </div>
+    <div class="menu" data-category="Minuman" data-price="5000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="/assets/documentasi/image9.png" alt="">
+            </div>
+            <p>
+                Es Jeruk
+            </p>
+            <div class="buy-row">
+                <p>
+                    Rp 5.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Es Jeruk" >+</button></div>
+            </div>
+        </article>
+    </div>
+    <div class="menu" data-category="Minuman" data-price="4000">
+        <article>
+            <div class="ready-status">
+                <span>Ready</span>
+                <img src="assets/documentasi/image10.png" alt="">
+            </div>
+            <p>
+                Es Teh
+            </p>
+            <div class="buy-row">
+                <p>
+                    Rp 4.000
+                </p>
+                <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Es Teh" >+</button></div>
+            </article>
+        </div>
+        <div class="menu" data-category="Tambahan" data-price="5000">
+            <article>
+                <div class="ready-status">
+                    <span>Ready</span>
+                    <img src="assets/documentasi/image11.png" alt="">
+                </div>
+                <p>
+                    Ceker Ayam
+                </p>
+                <div class="buy-row">
+                    <p>
+                        Rp 5.000
+                    </p>
+                    <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Ceker Ayam" >+</button></div>
+                </div>
+            </article>
+        </div>
+        <div class="menu" data-category="Tambahan" data-price="5000">
+            <article>
+                <div class="ready-status">
+                    <span>Ready</span>
+                    <img src="assets/documentasi/image12.png" alt="">
+                </div>
+                <p>
+                    Pangsit Goreng
+                </p>
+                <div class="buy-row">
+                    <p>
+                        Rp 5.000
+                    </p>
+                    <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                <span class="quantity-value" aria-live="polite">0</span>
+                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Pangsit Goreng" >+</button></div>
+                </div>
+            </article>
+        </div>
+        
+    </div>
+    
+<section class="cart-summary" aria-labelledby="cart-heading">
+    <div class="cart-header">
+        <h2 id="cart-heading">Pesanan Saya</h2>
+        <span id="cart-total-quantity">0 item</span>
+    </div>
+
+    <p id="cart-empty">
+        Belum ada menu yang dipilih.
+    </p>
+
+    <ul id="cart-items"></ul>
+
+    <div class="cart-footer">
+        <span>Total Pembayaran</span>
+        <strong id="cart-total-price">Rp0</strong>
+    </div>
+
+    <button id="checkout-button" type="button" disabled>
+        Lanjutkan Pesanan
+    </button>
+    
+<section id="order-confirmation" class="order-confirmation" hidden>
+    <h2>Konfirmasi Pesanan</h2>
+    <p class="confirmation-description">
+        Periksa pesananmu sebelum melanjutkan.
+    </p>
+
+    <div class="order-review">
+        <h3>Ringkasan Pesanan</h3>
+        <ul id="order-review-items"></ul>
+
+        <div class="order-review-total">
+            <span>Total Pembayaran</span>
+            <strong id="order-review-total">Rp0</strong>
+        </div>
+    </div>
+
+    <form id="order-form">
+        <div class="order-field">
+            <label for="customer-name">Nama Pemesan</label>
+            <input
+                type="text"
+                id="customer-name"
+                name="customerName"
+                placeholder="Masukkan nama kamu"
+                required
+                maxlength="100"
+            >
+        </div>
+
+        <div class="order-field">
+            <label for="order-type">Jenis Pesanan</label>
+            <select id="order-type" name="orderType" required>
+                <option value="Dine-in">Makan di tempat</option>
+                <option value="Takeaway">Bawa pulang</option>
+            </select>
+        </div>
+
+        <div class="order-field">
+            <label for="order-notes">Catatan (opsional)</label>
+            <textarea
+                id="order-notes"
+                name="orderNotes"
+                placeholder="Contoh: Pakai daging unta"
+                rows="3"
+                maxlength="500"
+            ></textarea>
+        </div>
+
+        <div class="order-actions">
+            <button type="button" id="back-to-menu">
+                Kembali ke Menu
+            </button>
+
+            <button type="submit" id="confirm-order">
+                Konfirmasi Pesanan
+            </button>
+        </div>
+    </form>
+
+    <p id="order-result" role="status" aria-live="polite" hidden></p>
+</section>
+
+</section>
+
+</div>
+
+<script src="/assets/js/session.js"></script>
+<script>
+    // Dynamic nav: show Login or Logout, show Profile only if logged in.
+    (function updateNav() {
+        const profileItem = document.getElementById('nav-profile-item');
+        const authItem    = document.getElementById('nav-auth-item');
+
+        if (isLoggedIn()) {
+            profileItem.style.display = '';
+            const logoutLink = document.createElement('a');
+            logoutLink.href  = '#';
+            logoutLink.textContent = 'Logout';
+            logoutLink.style.color = '#b45309';
+            logoutLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (confirm('Yakin ingin keluar?')) {
+                    fetch("/api/logout.php", { method: "POST" });
+                    clearSession();
+                    window.location.href = '/Dashboard.php';
+                }
+            });
+            authItem.appendChild(logoutLink);
+        } else {
+            const loginLink = document.createElement('a');
+            loginLink.href  = '/Login.php';
+            loginLink.textContent = 'Login';
+            authItem.appendChild(loginLink);
+        }
+    })();
+</script>
+<script src="/assets/js/menu.js"></script>
+</body>
+</html>

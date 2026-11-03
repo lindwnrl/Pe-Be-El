@@ -72,8 +72,8 @@ function hasSeat()          { return !!getSession().selectedSeat; }
 // ── Guard helpers ──────────────────────────────────────────────────────────
 
 /**
- * Call at the top of Menu.html and any other page that requires a seat.
- * Redirects to Kursi.html if no seat is booked.
+ * Call at the top of Menu.php and any other page that requires a seat.
+ * Redirects to Kursi.php if no seat is booked.
  */
 function requireSeat() {
     if (!hasSeat()) {
@@ -81,7 +81,7 @@ function requireSeat() {
             "ninaRasaFlash",
             "Silakan pilih kursi/meja terlebih dahulu sebelum memesan makanan."
         );
-        window.location.href = "/Kursi.html";
+        window.location.href = "/Kursi.php";
         return false;
     }
     return true;
@@ -89,7 +89,7 @@ function requireSeat() {
 
 /**
  * Call before checkout to ensure the user is logged in with a complete profile.
- * Redirects to Profile.html if not.
+ * Redirects to Profile.php if not.
  */
 function requireProfile() {
     if (!isProfileComplete()) {
@@ -97,7 +97,7 @@ function requireProfile() {
             "ninaRasaFlash",
             "Silakan lengkapi data profil Anda sebelum menyelesaikan pesanan."
         );
-        window.location.href = "/Profile.html";
+        window.location.href = "/Profile.php";
         return false;
     }
     return true;
@@ -105,7 +105,7 @@ function requireProfile() {
 
 /**
  * Call before any page that requires the user to be logged in.
- * Redirects to Login.html if not.
+ * Redirects to Login.php if not.
  */
 function requireLogin() {
     if (!isLoggedIn()) {
@@ -113,7 +113,7 @@ function requireLogin() {
             "ninaRasaFlash",
             "Silakan masuk ke akun Anda terlebih dahulu."
         );
-        window.location.href = "/Login.html";
+        window.location.href = "/Login.php";
         return false;
     }
     return true;
@@ -217,7 +217,7 @@ function _showLoginModal() {
     document.body.appendChild(overlay);
 
     document.getElementById('nr-modal-login').addEventListener('click', function() {
-        window.location.href = '/Login.html';
+        window.location.href = '/Login.php';
     });
     document.getElementById('nr-modal-cancel').addEventListener('click', function() {
         overlay.remove();
@@ -231,7 +231,7 @@ function _showLoginModal() {
 /**
  * Page-load guard for pages that require login + complete profile.
  * Call on Dashboard, Menu, Kursi.
- * If logged in but profile incomplete → redirect to Profile.html
+ * If logged in but profile incomplete → redirect to Profile.php
  */
 function enforceProfileGate() {
     if (isLoggedIn() && !isProfileComplete()) {
@@ -239,7 +239,7 @@ function enforceProfileGate() {
             'ninaRasaFlash',
             'Silakan lengkapi profil Anda terlebih dahulu sebelum melanjutkan.'
         );
-        window.location.href = '/Profile.html';
+        window.location.href = '/Profile.php';
         return false;
     }
     return true;

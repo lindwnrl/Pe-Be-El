@@ -1,0 +1,102 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="login-container">
+        <section class="login-card">
+            <div class="login-header">
+                <div class="image">
+                    <img src="/assets//documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="">
+                </div>
+                <h1>Register</h1>
+                <form id="register-form" novalidate>
+                    <p>
+                        <h3>Username</h3>
+                        <input type="text" id="username" name="username" placeholder="Username" required>
+                    </p>
+                    <p>
+                        <h3>Password</h3>
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                    </p>
+                    <p>
+                        <h3>Confirm Password</h3>
+                        <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password" required>
+                    </p>
+                    <p id="register-error" role="alert" aria-live="polite" style="color:#b91c1c;font-size:0.88rem;display:none;"></p>
+                    <div>
+                        <button type="submit" class="button">Daftar</button>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="/assets/js/session.js"></script>
+    <script>
+        document.getElementById("register-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const username  = document.getElementById("username").value.trim();
+            const password  = document.getElementById("password").value;
+            const confirm   = document.getElementById("confirm-password").value;
+            const errorEl   = document.getElementById("register-error");
+
+            // Validate fields.
+            if (!username || !password) {
+                errorEl.textContent = "Username dan password wajib diisi.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            if (password !== confirm) {
+                errorEl.textContent = "Password dan konfirmasi password tidak cocok.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            if (password.length < 6) {
+                errorEl.textContent = "Password minimal 6 karakter.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            // Persist to the `akun` table through the PHP endpoint.
+            errorEl.style.display = "none";
+
+            fetch("/api/register.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: username, password: password })
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (!data || !data.ok) {
+                        errorEl.textContent = (data && data.error) || "Pendaftaran gagal. Silakan coba lagi.";
+                        errorEl.style.display = "block";
+                        return;
+                    }
+
+                    sessionStorage.setItem(
+                        "ninaRasaFlash",
+                        "Registrasi berhasil! Silakan masuk dengan akun Anda."
+                    );
+                    window.location.href = "/Login.php";
+                })
+                .catch(function () {
+                    errorEl.textContent = "Pendaftaran gagal. Silakan coba lagi.";
+                    errorEl.style.display = "block";
+                });
+        });
+    </script>
+</body>
+</html>

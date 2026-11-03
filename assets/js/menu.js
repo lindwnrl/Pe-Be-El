@@ -1,5 +1,5 @@
 
-// ── Profile gate: if logged in but profile incomplete, redirect to Profile.html
+// ── Profile gate: if logged in but profile incomplete, redirect to Profile.php
 enforceProfileGate();
 // Guests can browse menu freely; seat is required only when a logged-in user tries to order.
 
@@ -50,7 +50,7 @@ const rupiah = new Intl.NumberFormat("id-ID", {
         " &nbsp;·&nbsp; " + seat.guests + " orang" +
         " &nbsp;·&nbsp; " + (seat.date || "-") +
         " &nbsp;·&nbsp; " + (seat.time || "-") +
-        " &nbsp;<a href='/Kursi.html' style='margin-left:auto;color:#b45309;" +
+        " &nbsp;<a href='/Kursi.php' style='margin-left:auto;color:#b45309;" +
         "font-size:0.8rem;text-decoration:underline;'>Ganti meja</a>";
 
     // Insert right after the welcoming-info block.

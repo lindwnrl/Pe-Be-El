@@ -12,3 +12,6 @@ Add javascript ke menu dan sedikit penambahan interface untuk menu.Juga terdapat
 
 ## Kamis-October-29
 Add Session untuk seluruh fitur
+
+## Selasa-November-3
+Pergantian dari static .html menjadi .php.Juga penambahan autentikasi login dan register
