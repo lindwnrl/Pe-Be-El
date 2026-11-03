@@ -16,7 +16,8 @@
                 <li><a href="/Dashboard.html">Home</a></li>
                 <li><a href="/Menu.html">Menu</a></li>
                 <li><a href="/Kursi.html">Kursi</a></li>
-                <li><a href="/Profile.html">Profile</a></li>
+                <li id="nav-profile-item" style="display:none;"><a href="/Profile.html">Profile</a></li>
+                <li id="nav-auth-item"><!-- filled by JS --></li>
             </ul>
         </nav>
     </header>
@@ -196,6 +197,37 @@
 
 </main>
 <script src="/assets/js/session.js"></script>
+<script>
+    // Profile gate: logged-in users with incomplete profile must go to Profile.html.
+    enforceProfileGate();
+
+    // Dynamic nav: show Login or Logout, show Profile only if logged in.
+    (function updateNav() {
+        const profileItem = document.getElementById('nav-profile-item');
+        const authItem    = document.getElementById('nav-auth-item');
+
+        if (isLoggedIn()) {
+            profileItem.style.display = '';
+            const logoutLink = document.createElement('a');
+            logoutLink.href  = '#';
+            logoutLink.textContent = 'Logout';
+            logoutLink.style.color = '#b45309';
+            logoutLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (confirm('Yakin ingin keluar?')) {
+                    clearSession();
+                    window.location.href = '/Dashboard.html';
+                }
+            });
+            authItem.appendChild(logoutLink);
+        } else {
+            const loginLink = document.createElement('a');
+            loginLink.href  = '/Login.html';
+            loginLink.textContent = 'Login';
+            authItem.appendChild(loginLink);
+        }
+    })();
+</script>
 <script src="/assets/js/kursi.js"></script>
 </body>
 </html>

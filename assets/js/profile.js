@@ -91,8 +91,12 @@ profileForm.addEventListener("submit", function (event) {
 
     if (isComplete) {
         showSuccessMessage(
-            "Profil berhasil disimpan! Anda sekarang dapat melanjutkan pemesanan."
+            "Profil berhasil disimpan! Mengarahkan ke Dashboard..."
         );
+        // Redirect to Dashboard after profile is complete.
+        setTimeout(function () {
+            window.location.href = "/Dashboard.html";
+        }, 1500);
     } else {
         showSuccessMessage(
             "Data tersimpan, tetapi Username, Nama, dan Email wajib diisi untuk memesan."

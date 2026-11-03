@@ -159,6 +159,92 @@ function showFlashMessage() {
     setTimeout(() => { if (banner.parentNode) banner.remove(); }, 5000);
 }
 
+// ── Guest login interception modal ────────────────────────────────────────
+
+/**
+ * Show the login-required modal for guests attempting to order/book.
+ * Returns false if not logged in (modal shown), true if logged in.
+ */
+function requireLoginModal() {
+    if (isLoggedIn()) return true;
+    _showLoginModal();
+    return false;
+}
+
+/** Internal: inject and show the login interception modal. */
+function _showLoginModal() {
+    // Remove any existing modal
+    const existing = document.getElementById('nr-login-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'nr-login-modal';
+    Object.assign(overlay.style, {
+        position: 'fixed', inset: '0', zIndex: '10000',
+        background: 'rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '1rem'
+    });
+
+    const box = document.createElement('div');
+    Object.assign(box.style, {
+        background: '#fff', borderRadius: '16px', padding: '2rem',
+        maxWidth: '400px', width: '100%', textAlign: 'center',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.2)'
+    });
+
+    box.innerHTML = `
+        <div style="font-size:2.5rem;margin-bottom:0.5rem;">🔒</div>
+        <h2 style="margin-bottom:0.75rem;font-size:1.25rem;color:#35231e;">Akun Diperlukan</h2>
+        <p style="color:#685852;margin-bottom:1.5rem;font-size:0.95rem;">
+            Kamu perlu login untuk melakukan pemesanan.
+        </p>
+        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+            <button id="nr-modal-login" style="
+                padding:0.6rem 1.5rem;background:#770900;color:#fff;
+                border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:600;">
+                Login
+            </button>
+            <button id="nr-modal-cancel" style="
+                padding:0.6rem 1.5rem;background:#f5f5f5;color:#35231e;
+                border:1px solid #ddd;border-radius:8px;font-size:1rem;cursor:pointer;">
+                Lanjutkan sebagai Tamu
+            </button>
+        </div>
+    `;
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    document.getElementById('nr-modal-login').addEventListener('click', function() {
+        window.location.href = '/Login.html';
+    });
+    document.getElementById('nr-modal-cancel').addEventListener('click', function() {
+        overlay.remove();
+    });
+    // Close on overlay click
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) overlay.remove();
+    });
+}
+
+/**
+ * Page-load guard for pages that require login + complete profile.
+ * Call on Dashboard, Menu, Kursi.
+ * If logged in but profile incomplete → redirect to Profile.html
+ */
+function enforceProfileGate() {
+    if (isLoggedIn() && !isProfileComplete()) {
+        sessionStorage.setItem(
+            'ninaRasaFlash',
+            'Silakan lengkapi profil Anda terlebih dahulu sebelum melanjutkan.'
+        );
+        window.location.href = '/Profile.html';
+        return false;
+    }
+    return true;
+}
+
 // ── Internal helpers ───────────────────────────────────────────────────────
 
 function _defaultSession() {

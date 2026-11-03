@@ -114,6 +114,9 @@ function updateConfirmationButton() {
 confirmButton.addEventListener("click", function () {
     if (!selectedTable) return;
 
+    // Guests cannot confirm a reservation.
+    if (!requireLoginModal()) return;
+
     const seatData = {
         tableId:  selectedTable.id,
         capacity: selectedTable.capacity,

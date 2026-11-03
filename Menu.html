@@ -16,8 +16,8 @@
                 <li><a href="/Dashboard.html">Home</a></li>
                 <li><a href="/Menu.html">Menu</a></li>
                 <li><a href="/Kursi.html">Kursi</a></li>
-                <li><a href="/Profile.html">Profile</a></li>
-                
+                <li id="nav-profile-item" style="display:none;"><a href="/Profile.html">Profile</a></li>
+                <li id="nav-auth-item"><!-- filled by JS --></li>
             </ul>
         </nav>
     </header>
@@ -36,7 +36,7 @@
                 <input id="menu-search" type="search" placeholder="Cari nama menu..." aria-label="Cari nama menu">
             </label>
     
-    
+
     <label class="menu-category">
         <span>Kategori:</span>
         <select id="menu-category">
@@ -221,7 +221,6 @@
                 <div class="jumlah-barang"><button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
                 <span class="quantity-value" aria-live="polite">0</span>
                 <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Es Teh" >+</button></div>
-            </div>
             </article>
         </div>
         <div class="menu" data-category="Tambahan" data-price="5000">
@@ -353,6 +352,34 @@
 </div>
 
 <script src="/assets/js/session.js"></script>
+<script>
+    // Dynamic nav: show Login or Logout, show Profile only if logged in.
+    (function updateNav() {
+        const profileItem = document.getElementById('nav-profile-item');
+        const authItem    = document.getElementById('nav-auth-item');
+
+        if (isLoggedIn()) {
+            profileItem.style.display = '';
+            const logoutLink = document.createElement('a');
+            logoutLink.href  = '#';
+            logoutLink.textContent = 'Logout';
+            logoutLink.style.color = '#b45309';
+            logoutLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (confirm('Yakin ingin keluar?')) {
+                    clearSession();
+                    window.location.href = '/Dashboard.html';
+                }
+            });
+            authItem.appendChild(logoutLink);
+        } else {
+            const loginLink = document.createElement('a');
+            loginLink.href  = '/Login.html';
+            loginLink.textContent = 'Login';
+            authItem.appendChild(loginLink);
+        }
+    })();
+</script>
 <script src="/assets/js/menu.js"></script>
 </body>
 </html>

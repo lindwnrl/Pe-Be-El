@@ -1,9 +1,7 @@
 
-// ── Guard: must have a seat before browsing the menu ──────────────────────
-// (requireSeat() is defined in session.js which is loaded before this file)
-if (!requireSeat()) {
-    throw new Error("No seat selected — redirecting to Kursi.html");
-}
+// ── Profile gate: if logged in but profile incomplete, redirect to Profile.html
+enforceProfileGate();
+// Guests can browse menu freely; seat is required only when a logged-in user tries to order.
 
 // ── DOM references ─────────────────────────────────────────────────────────
 
@@ -109,6 +107,9 @@ menuItems.forEach(function (item) {
     control.replaceChildren(minusButton, quantityDisplay, plusButton);
 
     plusButton.addEventListener("click", function () {
+        // Guests cannot add items to cart.
+        if (!requireLoginModal()) return;
+
         const qty = Number(item.dataset.quantity);
         item.dataset.quantity = String(qty + 1);
         updateQuantityControls(item);
@@ -278,7 +279,10 @@ function renderOrderReview() {
 checkoutButton.addEventListener("click", function () {
     if (checkoutButton.disabled) return;
 
-    // Guard 1: seat required (already checked on load, but double-check).
+    // Guard: guests cannot check out.
+    if (!requireLoginModal()) return;
+
+    // Guard 1: seat required for logged-in users.
     if (!requireSeat()) return;
 
     // Guard 2: profile must be complete before finalising.

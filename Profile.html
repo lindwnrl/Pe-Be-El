@@ -17,11 +17,7 @@
                 <li><a href="/Menu.html" id="nav-menu">Menu</a></li>
                 <li><a href="/Kursi.html">Kursi</a></li>
                 <li><a href="/Profile.html">Profile</a></li>
-                <li>
-                    <a href="#" id="logout-btn"
-                       style="color:#b45309;"
-                       title="Keluar dari sesi saat ini">Logout</a>
-                </li>
+                <li id="nav-auth-item"><!-- filled by JS --></li>
             </ul>
         </nav>
     </header>
@@ -74,26 +70,48 @@
     <!-- session.js MUST be loaded before profile.js -->
     <script src="/assets/js/session.js"></script>
     <script>
-        // Guard the Menu nav link on this page too.
-        document.getElementById("nav-menu").addEventListener("click", function (e) {
+        // Guard: must be logged in to view Profile.
+        if (!isLoggedIn()) {
+            window.location.href = '/Login.html';
+        }
+
+        // Show any flash messages (e.g., redirected from another page).
+        showFlashMessage();
+
+        // Dynamic nav: show Logout link (Profile is always accessible if logged in).
+        (function updateNav() {
+            const authItem = document.getElementById('nav-auth-item');
+            const logoutLink = document.createElement('a');
+            logoutLink.href  = '#';
+            logoutLink.id    = 'logout-btn';
+            logoutLink.style.color = '#b45309';
+            logoutLink.title = 'Keluar dari sesi saat ini';
+            logoutLink.textContent = 'Logout';
+            logoutLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (confirm('Yakin ingin keluar?')) {
+                    clearSession();
+                    window.location.href = '/Dashboard.html';
+                }
+            });
+            authItem.appendChild(logoutLink);
+        })();
+
+        // Guard the Menu nav link: require seat for logged-in users with complete profile.
+        document.getElementById('nav-menu').addEventListener('click', function (e) {
             e.preventDefault();
+            if (!isLoggedIn()) {
+                window.location.href = '/Menu.html';
+                return;
+            }
             if (!hasSeat()) {
                 sessionStorage.setItem(
-                    "ninaRasaFlash",
-                    "Silakan pilih kursi/meja terlebih dahulu sebelum memesan makanan."
+                    'ninaRasaFlash',
+                    'Silakan pilih kursi/meja terlebih dahulu sebelum memesan makanan.'
                 );
-                window.location.href = "/Kursi.html";
+                window.location.href = '/Kursi.html';
             } else {
-                window.location.href = "/Menu.html";
-            }
-        });
-
-        // Logout: clear session and redirect to Dashboard.
-        document.getElementById("logout-btn").addEventListener("click", function (e) {
-            e.preventDefault();
-            if (confirm("Yakin ingin keluar?")) {
-                clearSession();
-                window.location.href = "/Dashboard.html";
+                window.location.href = '/Menu.html';
             }
         });
     </script>
