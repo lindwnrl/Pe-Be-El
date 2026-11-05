@@ -180,53 +180,46 @@ function _showLoginModal() {
 
     const overlay = document.createElement('div');
     overlay.id = 'nr-login-modal';
-    Object.assign(overlay.style, {
-        position: 'fixed', inset: '0', zIndex: '10000',
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '1rem'
-    });
+    overlay.className = 'modal-overlay';
 
     const box = document.createElement('div');
-    Object.assign(box.style, {
-        background: '#fff', borderRadius: '16px', padding: '2rem',
-        maxWidth: '400px', width: '100%', textAlign: 'center',
-        boxShadow: '0 10px 40px rgba(0,0,0,0.2)'
-    });
+    box.className = 'modal-box';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-labelledby', 'nr-modal-title');
 
     box.innerHTML = `
-        <div style="font-size:2.5rem;margin-bottom:0.5rem;">🔒</div>
-        <h2 style="margin-bottom:0.75rem;font-size:1.25rem;color:#35231e;">Akun Diperlukan</h2>
-        <p style="color:#685852;margin-bottom:1.5rem;font-size:0.95rem;">
-            Kamu perlu login untuk melakukan pemesanan.
-        </p>
-        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
-            <button id="nr-modal-login" style="
-                padding:0.6rem 1.5rem;background:#770900;color:#fff;
-                border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:600;">
-                Login
-            </button>
-            <button id="nr-modal-cancel" style="
-                padding:0.6rem 1.5rem;background:#f5f5f5;color:#35231e;
-                border:1px solid #ddd;border-radius:8px;font-size:1rem;cursor:pointer;">
-                Lanjutkan sebagai Tamu
-            </button>
+        <div class="modal-icon" aria-hidden="true">🔒</div>
+        <h2 id="nr-modal-title">Akun Diperlukan</h2>
+        <p>Kamu perlu login untuk melakukan pemesanan.</p>
+        <div class="modal-actions">
+            <button type="button" id="nr-modal-login" class="button">Login</button>
+            <button type="button" id="nr-modal-cancel" class="button button--ghost">Lanjutkan sebagai Tamu</button>
         </div>
     `;
 
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
-    document.getElementById('nr-modal-login').addEventListener('click', function() {
+    const close = function () { overlay.remove(); };
+
+    document.getElementById('nr-modal-login').addEventListener('click', function () {
         window.location.href = '/Login.php';
     });
-    document.getElementById('nr-modal-cancel').addEventListener('click', function() {
-        overlay.remove();
+    document.getElementById('nr-modal-cancel').addEventListener('click', close);
+
+    // Close on overlay click or Escape.
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) close();
     });
-    // Close on overlay click
-    overlay.addEventListener('click', function(e) {
-        if (e.target === overlay) overlay.remove();
+    document.addEventListener('keydown', function onEsc(e) {
+        if (e.key === 'Escape') {
+            close();
+            document.removeEventListener('keydown', onEsc);
+        }
     });
+
+    document.getElementById('nr-modal-cancel').focus();
 }
 
 /**

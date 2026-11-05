@@ -5,24 +5,30 @@ require_admin_page();
 $admin = auth_user();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
     <title>Admin — Stok Produk</title>
 </head>
 <body>
-    <header>
-        <a href="/Dashboard.php" class="logo">
-            <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Homepage">
-        </a>
-        <nav>
-            <ul id="site-nav"><!-- filled by nav.js --></ul>
-        </nav>
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="/Dashboard.php" class="logo">
+                <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Nina Rasa — Home">
+            </a>
+            <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Buka navigasi">☰</button>
+            <nav class="site-nav" aria-label="Navigasi utama">
+                <ul id="site-nav"><!-- filled by nav.js --></ul>
+            </nav>
+        </div>
     </header>
 
-    <main class="admin-page">
+    <main class="container admin-page">
         <section class="admin-panel" aria-labelledby="admin-stock-heading">
             <div class="admin-panel-head">
                 <div>
@@ -32,7 +38,7 @@ $admin = auth_user();
                         otomatis ditandai habis dan tidak bisa dipesan pelanggan.
                     </p>
                 </div>
-                <button type="button" id="admin-refresh" class="admin-btn">Muat ulang</button>
+                <button type="button" id="admin-refresh" class="button button--ghost button--sm">Muat ulang</button>
             </div>
 
             <p id="admin-summary" class="admin-summary" role="status" aria-live="polite">
@@ -60,6 +66,18 @@ $admin = auth_user();
             </div>
         </section>
     </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p class="site-footer__brand">Nina Rasa</p>
+            <p>Bakso &amp; Mie Ayam · Buka 10.00–20.00</p>
+            <nav aria-label="Navigasi footer">
+                <a href="/Dashboard.php">Home</a>
+                <a href="/Menu.php">Menu</a>
+                <a href="/Kursi.php">Kursi</a>
+            </nav>
+        </div>
+    </footer>
 
     <script src="/assets/js/session.js"></script>
     <script src="/assets/js/nav.js"></script>
@@ -155,7 +173,7 @@ $admin = auth_user();
                 feedback.setAttribute('role', 'status');
                 feedback.setAttribute('aria-live', 'polite');
 
-                const saveBtn = makeButton('Simpan', 'admin-btn admin-btn-primary', function () {
+                const saveBtn = makeButton('Simpan', 'button button--sm', function () {
                     saveStock(item, input, badge, feedback, saveBtn);
                 });
 

@@ -32,26 +32,12 @@ const rupiah = new Intl.NumberFormat("id-ID", {
     banner.className = "seat-banner";
     banner.setAttribute("aria-label", "Informasi kursi yang dipilih");
 
-    Object.assign(banner.style, {
-        background:    "#fefce8",
-        border:        "1px solid #ca8a04",
-        borderRadius:  "8px",
-        padding:       "0.6rem 1.2rem",
-        marginBottom:  "1rem",
-        fontSize:      "0.9rem",
-        color:         "#92400e",
-        display:       "flex",
-        alignItems:    "center",
-        gap:           "0.5rem"
-    });
-
     banner.innerHTML =
         "🪑 <strong>Meja " + seat.tableId + "</strong>" +
-        " &nbsp;·&nbsp; " + seat.guests + " orang" +
-        " &nbsp;·&nbsp; " + (seat.date || "-") +
-        " &nbsp;·&nbsp; " + (seat.time || "-") +
-        " &nbsp;<a href='/Kursi.php' style='margin-left:auto;color:#b45309;" +
-        "font-size:0.8rem;text-decoration:underline;'>Ganti meja</a>";
+        " <span aria-hidden='true'>·</span> " + seat.guests + " orang" +
+        " <span aria-hidden='true'>·</span> " + (seat.date || "-") +
+        " <span aria-hidden='true'>·</span> " + (seat.time || "-") +
+        " <a href='/Kursi.php'>Ganti meja</a>";
 
     // Insert right after the welcoming-info block.
     const welcomeInfo = document.querySelector(".welcoming-info");

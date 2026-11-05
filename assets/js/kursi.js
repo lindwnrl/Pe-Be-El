@@ -132,10 +132,9 @@ confirmButton.addEventListener("click", function () {
     message.textContent =
         "✔ Meja " + selectedTable.id + " berhasil dipesan! " +
         "Anda sekarang dapat memesan makanan.";
-    message.style.color = "#15803d";
 
     confirmButton.textContent = "Reservasi Tersimpan ✔";
-    confirmButton.style.background = "#15803d";
+    confirmButton.classList.add("is-confirmed");
 });
 
 // ── Form change listeners ──────────────────────────────────────────────────

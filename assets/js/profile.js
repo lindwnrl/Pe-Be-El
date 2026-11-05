@@ -182,64 +182,32 @@ profileForm.addEventListener("submit", function (event) {
 
 // ── Success notification ───────────────────────────────────────────────────
 
-function showSuccessMessage(text) {
-    let existing = document.getElementById("profile-save-msg");
+function showMessageAlert(id, role, className, text, autoClear) {
+    let existing = document.getElementById(id);
     if (!existing) {
         existing = document.createElement("p");
-        existing.id = "profile-save-msg";
-        existing.setAttribute("role", "status");
+        existing.id = id;
+        existing.setAttribute("role", role);
         existing.setAttribute("aria-live", "polite");
-        Object.assign(existing.style, {
-            marginTop:    "0.75rem",
-            padding:      "0.6rem 1rem",
-            background:   "#dcfce7",
-            border:       "1px solid #16a34a",
-            borderRadius: "6px",
-            color:        "#166534",
-            fontSize:     "0.9rem"
-        });
-
-        const submitBtn = profileForm.querySelector("button[type='submit']");
-        if (submitBtn && submitBtn.parentNode) {
-            submitBtn.parentNode.insertAdjacentElement("afterend", existing);
-        } else {
-            profileForm.appendChild(existing);
-        }
+        profileForm.appendChild(existing);
     }
 
+    existing.className = className;
     existing.textContent = text;
 
-    setTimeout(function () {
-        if (existing.parentNode) existing.textContent = "";
-    }, 6000);
+    if (autoClear) {
+        setTimeout(function () {
+            if (existing.parentNode) existing.textContent = "";
+        }, 6000);
+    }
+}
+
+function showSuccessMessage(text) {
+    showMessageAlert("profile-save-msg", "status", "form-alert form-alert--ok", text, true);
 }
 
 function showErrorMessage(text) {
-    let existing = document.getElementById("profile-error-msg");
-    if (!existing) {
-        existing = document.createElement("p");
-        existing.id = "profile-error-msg";
-        existing.setAttribute("role", "alert");
-        existing.setAttribute("aria-live", "polite");
-        Object.assign(existing.style, {
-            marginTop:    "0.75rem",
-            padding:      "0.6rem 1rem",
-            background:   "#fee2e2",
-            border:       "1px solid #dc2626",
-            borderRadius: "6px",
-            color:        "#991b1b",
-            fontSize:     "0.9rem"
-        });
-
-        const submitBtn = profileForm.querySelector("button[type='submit']");
-        if (submitBtn && submitBtn.parentNode) {
-            submitBtn.parentNode.insertAdjacentElement("afterend", existing);
-        } else {
-            profileForm.appendChild(existing);
-        }
-    }
-
-    existing.textContent = text;
+    showMessageAlert("profile-error-msg", "alert", "form-alert form-alert--error", text, false);
 }
 
 // Show any pending flash (e.g., redirected here from Menu.php).

@@ -1,19 +1,29 @@
 /**
  * nav.js — single source of truth for the site navigation.
  *
- * Renders into <ul id="site-nav">:
- *   Home · Menu · Kursi · [Profile] · [Admin] · [Login | Logout]
+ * Renders into <ul id="site-nav">.
  *
- * Profile is shown only when logged in; Admin only for admins.
- * Requires session.js (loaded first).
+ *  Landing page, guest (body[data-page="landing"]):
+ *      Home · Profile · Menu · Location · Login        (same-page anchors)
+ *
+ *  Everywhere else:
+ *      Home · Menu · Kursi · [Profile] · [Admin] · [Login | Logout]
+ *
+ * Also handles the mobile hamburger, the active-link state, and the
+ * section scroll-spy on the landing page. Requires session.js (loaded first).
  */
 
 (function () {
     'use strict';
 
+    var isLanding = document.body.dataset.page === 'landing';
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ── Item builders ─────────────────────────────────────────────────── */
+
     function createItem(label, href, id) {
-        const li = document.createElement('li');
-        const a  = document.createElement('a');
+        var li = document.createElement('li');
+        var a  = document.createElement('a');
         a.href = href;
         a.textContent = label;
         if (id) a.id = id;
@@ -22,12 +32,11 @@
     }
 
     function createLogoutItem() {
-        const li = document.createElement('li');
-        const a  = document.createElement('a');
+        var li = document.createElement('li');
+        var a  = document.createElement('a');
         a.href = '#';
         a.id = 'nav-logout';
         a.textContent = 'Logout';
-        a.style.color = '#b45309';
         a.title = 'Keluar dari sesi saat ini';
         a.addEventListener('click', function (e) {
             e.preventDefault();
@@ -44,33 +53,197 @@
         return li;
     }
 
+    /* ── Same-page anchors ─────────────────────────────────────────────── */
+
+    function wireAnchorScroll(list) {
+        list.addEventListener('click', function (e) {
+            var link = e.target.closest('a[href^="#"]');
+            if (!link) return;
+
+            var hash = link.getAttribute('href');
+            if (!hash || hash === '#') return;
+
+            var target = document.querySelector(hash);
+            if (!target) return; // let the browser handle it
+
+            e.preventDefault();
+            target.scrollIntoView({
+                behavior: reduceMotion ? 'auto' : 'smooth',
+                block: 'start'
+            });
+
+            // Keep the URL shareable without a second jump.
+            if (history.replaceState) {
+                history.replaceState(null, '', hash);
+            }
+        });
+    }
+
+    /* ── Active link (path based) ──────────────────────────────────────── */
+
+    function markActiveByPath(list) {
+        var path = window.location.pathname.replace(/\/+$/, '') || '/';
+
+        Array.prototype.forEach.call(list.querySelectorAll('a'), function (a) {
+            var href = a.getAttribute('href');
+            if (!href || href === '#' || href.charAt(0) === '#') return;
+
+            var target = href.replace(/\/+$/, '') || '/';
+            if (target === path) {
+                a.classList.add('is-active');
+                a.setAttribute('aria-current', 'page');
+            }
+        });
+    }
+
+    /* ── Scroll-spy (landing only) ─────────────────────────────────────── */
+
+    function wireScrollSpy(list) {
+        var links = {};
+        Array.prototype.forEach.call(
+            list.querySelectorAll('a[href^="#"]'),
+            function (a) { links[a.getAttribute('href').slice(1)] = a; }
+        );
+
+        var sections = Object.keys(links)
+            .map(function (id) { return document.getElementById(id); })
+            .filter(Boolean);
+
+        if (!sections.length || !('IntersectionObserver' in window)) return;
+
+        function setActive(id) {
+            Object.keys(links).forEach(function (key) {
+                var a = links[key];
+                if (key === id) {
+                    a.classList.add('is-active');
+                    a.setAttribute('aria-current', 'location');
+                } else {
+                    a.classList.remove('is-active');
+                    a.removeAttribute('aria-current');
+                }
+            });
+        }
+
+        var visible = new Map();
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                visible.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
+            });
+
+            var bestId = null;
+            var bestRatio = 0;
+
+            visible.forEach(function (ratio, id) {
+                if (ratio > bestRatio) {
+                    bestRatio = ratio;
+                    bestId = id;
+                }
+            });
+
+            if (bestId) setActive(bestId);
+        }, {
+            rootMargin: '-45% 0px -45% 0px',
+            threshold: [0, 0.25, 0.5, 0.75, 1]
+        });
+
+        sections.forEach(function (section) { observer.observe(section); });
+
+        // Keep the first item active while above the first section.
+        setActive(sections[0].id);
+    }
+
+    /* ── Render ────────────────────────────────────────────────────────── */
+
     function buildNav() {
-        const list = document.getElementById('site-nav');
+        var list = document.getElementById('site-nav');
         if (!list) return;
 
-        const loggedIn = isLoggedIn();
-        const admin    = isAdmin();
+        var loggedIn = isLoggedIn();
+        var admin    = isAdmin();
 
-        const items = [
-            createItem('Home', '/Dashboard.php'),
-            createItem('Menu', '/Menu.php', 'nav-menu'),
-            createItem('Kursi', '/Kursi.php')
-        ];
+        var items;
 
-        if (loggedIn) {
-            items.push(createItem('Profile', '/Profile.php', 'nav-profile'));
+        if (isLanding && !loggedIn) {
+            items = [
+                createItem('Home', '#home', 'nav-home'),
+                createItem('Profile', '#profile', 'nav-profile'),
+                createItem('Menu', '#menu', 'nav-menu'),
+                createItem('Location', '#location', 'nav-location'),
+                createItem('Login', '/Login.php', 'nav-login')
+            ];
+        } else {
+            items = [
+                createItem('Home', '/Dashboard.php'),
+                createItem('Menu', '/Menu.php', 'nav-menu'),
+                createItem('Kursi', '/Kursi.php')
+            ];
+
+            if (loggedIn) {
+                items.push(createItem('Profile', '/Profile.php', 'nav-profile'));
+            }
+
+            if (admin) {
+                items.push(createItem('Admin', '/Admin.php', 'nav-admin'));
+            }
+
+            items.push(loggedIn
+                ? createLogoutItem()
+                : createItem('Login', '/Login.php', 'nav-login'));
         }
-
-        if (admin) {
-            items.push(createItem('Admin', '/Admin.php', 'nav-admin'));
-        }
-
-        items.push(loggedIn
-            ? createLogoutItem()
-            : createItem('Login', '/Login.php', 'nav-login'));
 
         list.replaceChildren.apply(list, items);
+
+        if (isLanding && !loggedIn) {
+            wireAnchorScroll(list);
+            wireScrollSpy(list);
+        } else {
+            markActiveByPath(list);
+        }
+    }
+
+    /* ── Mobile hamburger ──────────────────────────────────────────────── */
+
+    function wireToggle() {
+        var header = document.querySelector('.site-header');
+        var toggle = document.querySelector('.nav-toggle');
+        if (!header || !toggle) return;
+
+        function setOpen(open) {
+            header.classList.toggle('nav-open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
+        toggle.addEventListener('click', function () {
+            setOpen(!header.classList.contains('nav-open'));
+        });
+
+        // Keyboard: Escape closes the panel.
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') setOpen(false);
+        });
+
+        // Selecting a destination closes the panel.
+        header.addEventListener('click', function (e) {
+            if (e.target.closest('a') && window.innerWidth <= 720) setOpen(false);
+        });
+    }
+
+    /* ── Header elevation on scroll ────────────────────────────────────── */
+
+    function wireScrollShadow() {
+        var header = document.querySelector('.site-header');
+        if (!header) return;
+
+        function update() {
+            header.classList.toggle('is-scrolled', window.scrollY > 4);
+        }
+
+        window.addEventListener('scroll', update, { passive: true });
+        update();
     }
 
     buildNav();
+    wireToggle();
+    wireScrollShadow();
 })();
