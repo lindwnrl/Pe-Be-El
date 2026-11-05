@@ -80,16 +80,37 @@
                     }
 
                     // Mark user as logged in in session (same shape as before).
+                    const userData = data.user || {};
+                    const isAdmin = userData.role === "admin";
+                    const isComplete = !!(
+                        userData.nama &&
+                        userData.no_hp &&
+                        userData.email &&
+                        userData.jenis_kelamin &&
+                        userData.tanggal_lahir
+                    );
+
                     updateSession({
                         user: {
-                            isLoggedIn: true,
-                            username:   username,
-                            nama:       "",
-                            email:      ""
-                        }
+                            isLoggedIn:    true,
+                            username:      username,
+                            role:          userData.role || "",
+                            nama:          userData.nama || "",
+                            email:         userData.email || "",
+                            no_hp:         userData.no_hp || "",
+                            jenis_kelamin: userData.jenis_kelamin || "",
+                            tanggal_lahir: userData.tanggal_lahir || ""
+                        },
+                        // Admins and customers follow the same profile rule.
+                        isProfileComplete: isComplete
                     });
 
-                    window.location.href = "/Profile.php";
+                    // Admins land on the console, but only once their profile is complete.
+                    if (isAdmin) {
+                        window.location.href = isComplete ? "/Admin.php" : "/Profile.php";
+                    } else {
+                        window.location.href = "/Profile.php";
+                    }
                 })
                 .catch(function () {
                     errorEl.textContent = "Login gagal. Silakan coba lagi.";

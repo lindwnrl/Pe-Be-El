@@ -74,6 +74,74 @@ function getSavedQuantity(menuName) {
     return found ? found.quantity : 0;
 }
 
+// ── Stock state ────────────────────────────────────────────────────────────
+
+// menu_id -> stok. Empty until /api/menu-stock.php answers.
+const stockByMenuId = new Map();
+
+/** Stock for a card, or null when stock is unknown (no cap applied). */
+function stockOf(item) {
+    const id = Number(item.dataset.menuId);
+    if (!id || !stockByMenuId.has(id)) return null;
+    return stockByMenuId.get(id);
+}
+
+/** Highest quantity this card may hold. */
+function maxQuantityFor(item) {
+    const stok = stockOf(item);
+    return stok === null ? Infinity : stok;
+}
+
+/** Switch a card between the normal and the sold-out presentation. */
+function markCardSoldOut(item, soldOut) {
+    const statusBlock = item.querySelector(".ready-status");
+    if (statusBlock) {
+        const badge = statusBlock.querySelector("span");
+        if (badge) badge.textContent = soldOut ? "Habis" : "Ready";
+        statusBlock.classList.toggle("habis", soldOut);
+    }
+    item.classList.toggle("habis", soldOut);
+}
+
+/** Clamp a card's quantity to its stock and repaint its controls. */
+function applyStockState(item) {
+    const stok = stockOf(item);
+    if (stok === null) return; // stock unknown: keep previous behaviour
+
+    if (stok <= 0) {
+        item.dataset.quantity = "0";
+        markCardSoldOut(item, true);
+    } else {
+        markCardSoldOut(item, false);
+        if (Number(item.dataset.quantity) > stok) {
+            item.dataset.quantity = String(stok);
+        }
+    }
+
+    updateQuantityControls(item);
+}
+
+/** Fetch stock once and re-apply it to every card. */
+function loadStock() {
+    fetch("/api/menu-stock.php", { credentials: "same-origin" })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (!data || !data.ok || !Array.isArray(data.items)) return;
+
+            stockByMenuId.clear();
+            data.items.forEach(function (row) {
+                stockByMenuId.set(Number(row.menu_id), Number(row.stok));
+            });
+
+            menuItems.forEach(applyStockState);
+            updateCart();
+        })
+        .catch(function (err) {
+            // Stock unavailable: the menu stays fully browsable without a cap.
+            console.warn("Stok menu tidak dapat dimuat:", err);
+        });
+}
+
 // Initialize each menu card.
 menuItems.forEach(function (item) {
     const nameElement = item.querySelector("article p:first-of-type");
@@ -106,11 +174,16 @@ menuItems.forEach(function (item) {
 
     control.replaceChildren(minusButton, quantityDisplay, plusButton);
 
+    // Apply any already-known stock state to the freshly built controls.
+    applyStockState(item);
+
     plusButton.addEventListener("click", function () {
         // Guests cannot add items to cart.
         if (!requireLoginModal()) return;
 
         const qty = Number(item.dataset.quantity);
+        if (qty >= maxQuantityFor(item)) return; // never exceed stock
+
         item.dataset.quantity = String(qty + 1);
         updateQuantityControls(item);
         updateCart();
@@ -129,9 +202,24 @@ menuItems.forEach(function (item) {
 // ── Update one menu card ───────────────────────────────────────────────────
 
 function updateQuantityControls(item) {
-    const qty = Number(item.dataset.quantity);
+    const qty  = Number(item.dataset.quantity);
+    const stok = stockOf(item);
+    const soldOut = stok !== null && stok <= 0;
+
     item.querySelector(".quantity-value").textContent = qty;
-    item.querySelector(".minus").disabled = qty === 0;
+
+    const minusButton = item.querySelector(".minus");
+    const plusButton  = item.querySelector(".plus");
+
+    if (minusButton) {
+        minusButton.disabled = soldOut || qty === 0;
+    }
+
+    if (plusButton) {
+        const capped = soldOut || (stok !== null && qty >= stok);
+        plusButton.disabled = capped;
+        plusButton.setAttribute("aria-disabled", capped ? "true" : "false");
+    }
 }
 
 // ── Filter ─────────────────────────────────────────────────────────────────
@@ -167,7 +255,7 @@ function filterMenu() {
 function buildCartArray() {
     const cart = [];
     menuItems.forEach(function (item) {
-        const qty = Number(item.dataset.quantity);
+        const qty = Math.min(Number(item.dataset.quantity), maxQuantityFor(item));
         if (qty === 0) return;
 
         cart.push({
@@ -186,7 +274,7 @@ function updateCart() {
     let totalPrice = 0;
 
     menuItems.forEach(function (item) {
-        const qty = Number(item.dataset.quantity);
+        const qty = Math.min(Number(item.dataset.quantity), maxQuantityFor(item));
         if (qty === 0) return;
 
         const name     = item.querySelector("article p:first-of-type").textContent.trim();
@@ -250,7 +338,7 @@ function renderOrderReview() {
     let total = 0;
 
     menuItems.forEach(function (item) {
-        const qty = Number(item.dataset.quantity);
+        const qty = Math.min(Number(item.dataset.quantity), maxQuantityFor(item));
         if (qty === 0) return;
 
         const name     = item.querySelector("article p:first-of-type").textContent.trim();
@@ -361,6 +449,7 @@ orderForm.addEventListener("submit", function (event) {
 
 filterMenu();
 updateCart();
+loadStock();
 
 // Show any pending flash message (e.g., redirected from Dashboard).
 showFlashMessage();

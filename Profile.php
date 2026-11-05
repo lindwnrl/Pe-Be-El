@@ -13,17 +13,11 @@
             <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Homepage">
         </a>
         <nav>
-            <ul>
-                <li><a href="/Dashboard.php">Home</a></li>
-                <li><a href="/Menu.php" id="nav-menu">Menu</a></li>
-                <li><a href="/Kursi.php">Kursi</a></li>
-                <li><a href="/Profile.php">Profile</a></li>
-                <li id="nav-auth-item"><!-- filled by JS --></li>
-            </ul>
+            <ul id="site-nav"><!-- filled by nav.js --></ul>
         </nav>
     </header>
         <div class="card3">
-            <form class="form-profile">
+            <form class="form-profile" novalidate>
                 <h1>Profile saya</h1>
                 <p>
                     <label for="username">Username</label>
@@ -53,12 +47,12 @@
                     </span>    
                 </p>
                 
-                <p>
-                    <label for="tanggal-lahir">Tanggal lahir</label>
-                    <input type="date" name="tanggal-lahir" id="tanggal-lahir">
-                </p>
-                <p>
-                     <button type="submit">Simpan Profil</button>    
+                <p class="tanggal-row">
+                    <label for="tanggal-lahir">Tanggal lahir <span style="color:#b91c1c">*</span></label>
+                    <span class="tanggal-field">
+                        <input type="date" name="tanggal-lahir" id="tanggal-lahir" required>
+                        <button type="submit" id="simpan-profil">Simpan Profil</button>
+                    </span>
                 </p>
             </form>
             <div class="photo-profile">
@@ -70,6 +64,7 @@
 
     <!-- session.js MUST be loaded before profile.js -->
     <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/nav.js"></script>
     <script>
         // Guard: must be logged in to view Profile.
         if (!isLoggedIn()) {
@@ -78,26 +73,6 @@
 
         // Show any flash messages (e.g., redirected from another page).
         showFlashMessage();
-
-        // Dynamic nav: show Logout link (Profile is always accessible if logged in).
-        (function updateNav() {
-            const authItem = document.getElementById('nav-auth-item');
-            const logoutLink = document.createElement('a');
-            logoutLink.href  = '#';
-            logoutLink.id    = 'logout-btn';
-            logoutLink.style.color = '#b45309';
-            logoutLink.title = 'Keluar dari sesi saat ini';
-            logoutLink.textContent = 'Logout';
-            logoutLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (confirm('Yakin ingin keluar?')) {
-                    fetch("/api/logout.php", { method: "POST" });
-                    clearSession();
-                    window.location.href = '/Dashboard.php';
-                }
-            });
-            authItem.appendChild(logoutLink);
-        })();
 
         // Guard the Menu nav link: require seat for logged-in users with complete profile.
         document.getElementById('nav-menu').addEventListener('click', function (e) {

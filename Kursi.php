@@ -13,13 +13,7 @@
             <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Homepage">
         </a>
         <nav>
-            <ul>
-                <li><a href="/Dashboard.php">Home</a></li>
-                <li><a href="/Menu.php">Menu</a></li>
-                <li><a href="/Kursi.php">Kursi</a></li>
-                <li id="nav-profile-item" style="display:none;"><a href="/Profile.php">Profile</a></li>
-                <li id="nav-auth-item"><!-- filled by JS --></li>
-            </ul>
+            <ul id="site-nav"><!-- filled by nav.js --></ul>
         </nav>
     </header>
     
@@ -198,37 +192,10 @@
 
 </main>
 <script src="/assets/js/session.js"></script>
+<script src="/assets/js/nav.js"></script>
 <script>
     // Profile gate: logged-in users with incomplete profile must go to Profile.php.
     enforceProfileGate();
-
-    // Dynamic nav: show Login or Logout, show Profile only if logged in.
-    (function updateNav() {
-        const profileItem = document.getElementById('nav-profile-item');
-        const authItem    = document.getElementById('nav-auth-item');
-
-        if (isLoggedIn()) {
-            profileItem.style.display = '';
-            const logoutLink = document.createElement('a');
-            logoutLink.href  = '#';
-            logoutLink.textContent = 'Logout';
-            logoutLink.style.color = '#b45309';
-            logoutLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (confirm('Yakin ingin keluar?')) {
-                    fetch("/api/logout.php", { method: "POST" });
-                    clearSession();
-                    window.location.href = '/Dashboard.php';
-                }
-            });
-            authItem.appendChild(logoutLink);
-        } else {
-            const loginLink = document.createElement('a');
-            loginLink.href  = '/Login.php';
-            loginLink.textContent = 'Login';
-            authItem.appendChild(loginLink);
-        }
-    })();
 </script>
 <script src="/assets/js/kursi.js"></script>
 </body>

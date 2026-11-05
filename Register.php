@@ -76,7 +76,7 @@
             fetch("/api/register.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: username, password: password })
+                body: JSON.stringify({ username: username, password: password, confirm_password: confirm })
             })
                 .then(function (res) { return res.json(); })
                 .then(function (data) {

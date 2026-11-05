@@ -13,13 +13,7 @@
             <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Homepage">
         </a>
         <nav>
-            <ul>
-                <li><a href="/Dashboard.php">Home</a></li>
-                <li><a href="/Menu.php">Menu</a></li>
-                <li><a href="/Kursi.php">Kursi</a></li>
-                <li id="nav-profile-item" style="display:none;"><a href="/Profile.php">Profile</a></li>
-                <li id="nav-auth-item"><!-- filled by JS --></li>
-            </ul>
+            <ul id="site-nav"><!-- filled by nav.js --></ul>
         </nav>
     </header>
     <div class="menu-info">
@@ -54,7 +48,7 @@
 <p id="menu-empty" hidden>Menu tidak ditemukan.</p>
 
 <div class="data-menu">
-    <div class="menu" data-category="Bakso" data-price="20000">
+    <div class="menu" data-menu-id="1" data-category="Bakso" data-price="20000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -73,7 +67,7 @@
             </div>
         </article>
     </div>
-    <div class="menu" data-category="Bakso" data-price="20000">
+    <div class="menu" data-menu-id="2" data-category="Bakso" data-price="20000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -92,7 +86,7 @@
             </div>
         </article>
     </div>
-    <div class="menu" data-category="Tambahan" data-price="15000">
+    <div class="menu" data-menu-id="3" data-category="Tambahan" data-price="15000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -111,7 +105,7 @@
             </div>
         </article>
     </div>
-    <div class="menu" data-category="Mie Ayam" data-price="20000">
+    <div class="menu" data-menu-id="4" data-category="Mie Ayam" data-price="15000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -130,7 +124,7 @@
             </div>
         </article>
     </div>
-    <div class="menu" data-category="Mie Ayam" data-price="15000">
+    <div class="menu" data-menu-id="5" data-category="Mie Ayam" data-price="15000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -149,7 +143,7 @@
             </div>
         </article>
     </div>
-    <div class="menu" data-category="Mie Ayam" data-price="10000">
+    <div class="menu" data-menu-id="6" data-category="Mie Ayam" data-price="10000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -168,7 +162,7 @@
             </div>
         </article>
     </div>
-    <div class="menu" data-category="Minuman" data-price="4000">
+    <div class="menu" data-menu-id="7" data-category="Minuman" data-price="4000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -187,7 +181,7 @@
             </div>
         </article>
     </div>
-    <div class="menu" data-category="Minuman" data-price="5000">
+    <div class="menu" data-menu-id="8" data-category="Minuman" data-price="5000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -206,7 +200,7 @@
             </div>
         </article>
     </div>
-    <div class="menu" data-category="Minuman" data-price="4000">
+    <div class="menu" data-menu-id="9" data-category="Minuman" data-price="4000">
         <article>
             <div class="ready-status">
                 <span>Ready</span>
@@ -224,7 +218,7 @@
                 <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Es Teh" >+</button></div>
             </article>
         </div>
-        <div class="menu" data-category="Tambahan" data-price="5000">
+        <div class="menu" data-menu-id="10" data-category="Tambahan" data-price="5000">
             <article>
                 <div class="ready-status">
                     <span>Ready</span>
@@ -243,7 +237,7 @@
                 </div>
             </article>
         </div>
-        <div class="menu" data-category="Tambahan" data-price="5000">
+        <div class="menu" data-menu-id="11" data-category="Tambahan" data-price="5000">
             <article>
                 <div class="ready-status">
                     <span>Ready</span>
@@ -353,35 +347,7 @@
 </div>
 
 <script src="/assets/js/session.js"></script>
-<script>
-    // Dynamic nav: show Login or Logout, show Profile only if logged in.
-    (function updateNav() {
-        const profileItem = document.getElementById('nav-profile-item');
-        const authItem    = document.getElementById('nav-auth-item');
-
-        if (isLoggedIn()) {
-            profileItem.style.display = '';
-            const logoutLink = document.createElement('a');
-            logoutLink.href  = '#';
-            logoutLink.textContent = 'Logout';
-            logoutLink.style.color = '#b45309';
-            logoutLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (confirm('Yakin ingin keluar?')) {
-                    fetch("/api/logout.php", { method: "POST" });
-                    clearSession();
-                    window.location.href = '/Dashboard.php';
-                }
-            });
-            authItem.appendChild(logoutLink);
-        } else {
-            const loginLink = document.createElement('a');
-            loginLink.href  = '/Login.php';
-            loginLink.textContent = 'Login';
-            authItem.appendChild(loginLink);
-        }
-    })();
-</script>
+<script src="/assets/js/nav.js"></script>
 <script src="/assets/js/menu.js"></script>
 </body>
 </html>

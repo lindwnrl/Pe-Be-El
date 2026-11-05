@@ -13,15 +13,7 @@
         <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Homepage">
         </a>
         <nav>
-            <ul>
-                <li><a href="/Dashboard.php">Home</a></li>
-                <li><a href="/Menu.php" id="nav-menu">Menu</a></li>
-                <li><a href="/Kursi.php">Kursi</a></li>
-                <li id="nav-profile-item" style="display:none;"><a href="/Profile.php">Profile</a></li>
-                <li id="nav-auth-item">
-                    <!-- filled by JS: Login or Logout -->
-                </li>
-            </ul>
+            <ul id="site-nav"><!-- filled by nav.js --></ul>
         </nav>
     </header>
     
@@ -78,44 +70,13 @@
     </main>
 
     <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/nav.js"></script>
     <script>
         // Profile gate: logged-in users with incomplete profile must go to Profile.php.
         enforceProfileGate();
 
         // Show any flash messages (e.g. after logout).
         showFlashMessage();
-
-        // ── Dynamic nav ────────────────────────────────────────────────────
-        (function updateNav() {
-            const profileItem = document.getElementById('nav-profile-item');
-            const authItem    = document.getElementById('nav-auth-item');
-
-            if (isLoggedIn()) {
-                // Show Profile link.
-                profileItem.style.display = '';
-
-                // Show Logout link.
-                const logoutLink = document.createElement('a');
-                logoutLink.href  = '#';
-                logoutLink.textContent = 'Logout';
-                logoutLink.style.color = '#b45309';
-                logoutLink.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    if (confirm('Yakin ingin keluar?')) {
-                        fetch("/api/logout.php", { method: "POST" });
-                        clearSession();
-                        window.location.href = '/Dashboard.php';
-                    }
-                });
-                authItem.appendChild(logoutLink);
-            } else {
-                // Show Login link.
-                const loginLink = document.createElement('a');
-                loginLink.href  = '/Login.php';
-                loginLink.textContent = 'Login';
-                authItem.appendChild(loginLink);
-            }
-        })();
 
         // ── Menu navigation guard ──────────────────────────────────────────
         /**

@@ -10,9 +10,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
 $input    = request_input();
 $username = isset($input['username']) ? trim((string) $input['username']) : '';
 $password = isset($input['password']) ? (string) $input['password'] : '';
+$confirm  = isset($input['confirm_password']) ? (string) $input['confirm_password'] : '';
 
 if ($username === '' || $password === '') {
     json_response(['ok' => false, 'error' => 'Username dan password wajib diisi.']);
+}
+
+if ($password !== $confirm) {
+    json_response(['ok' => false, 'error' => 'Password dan konfirmasi password tidak cocok.']);
 }
 
 if (strlen($password) < 6) {
@@ -23,13 +28,32 @@ if (strlen($username) > 50) {
     json_response(['ok' => false, 'error' => 'Username maksimal 50 karakter.']);
 }
 
+$pdo = db();
+
 try {
-    $stmt = db()->prepare(
-        "INSERT INTO akun (username, password_hash, role) "
-        . "VALUES (:username, crypt(:password, gen_salt('bf')), 'pengguna')"
+    $pdo->beginTransaction();
+
+    // Create an empty pelanggan row to link the new account to.
+    $stmt = $pdo->query(
+        "INSERT INTO pelanggan (nama, no_hp, alamat) VALUES ('', '', '') RETURNING pelanggan_id"
     );
-    $stmt->execute([':username' => $username, ':password' => $password]);
+    $pelanggan_id = (int) $stmt->fetchColumn();
+
+    $stmt = $pdo->prepare(
+        "INSERT INTO akun (username, password_hash, role, pelanggan_id) "
+        . "VALUES (:username, crypt(:password, gen_salt('bf')), 'pengguna', :pelanggan_id)"
+    );
+    $stmt->execute([
+        ':username'     => $username,
+        ':password'     => $password,
+        ':pelanggan_id' => $pelanggan_id,
+    ]);
+
+    $pdo->commit();
 } catch (PDOException $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     if ($e->getCode() === '23505') {
         json_response(['ok' => false, 'error' => 'Username sudah terdaftar. Silakan gunakan username lain.']);
     }

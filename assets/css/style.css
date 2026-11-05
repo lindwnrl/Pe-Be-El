@@ -523,6 +523,25 @@ header nav a{
     margin-right:80px ;
 }
 
+/* Save button sits directly under the date input, right-aligned with it
+   (under the calendar icon). */
+.tanggal-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.tanggal-field button {
+    width: 120px;
+    margin: 0;
+    grid-column: auto;
+    justify-self: auto;
+    cursor: pointer;
+}
+
 .photo-profile{
     flex: 0 10px 230px;
     margin-bottom: 85px;
@@ -1388,7 +1407,6 @@ header nav a{
     width: 100%;
     max-width: 250px;
     border-radius: 20px;
-    max-width: 250px;
     border: 5px solid #fff;
     background-color: #fff;
     
@@ -1497,4 +1515,183 @@ header nav a{
 .role-button:focus-visible{
     outline: 3px solid rgba(212, 175, 55, 0.35);
     outline-offset: 3px;
+}
+
+/* ── Admin stock management ──────────────────────────────────────────── */
+
+.admin-page {
+    max-width: 1100px;
+    margin: 2rem auto 4rem;
+    padding: 0 1.5rem;
+}
+
+.admin-panel {
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 1.75rem;
+}
+
+.admin-panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.admin-panel-head h1 {
+    font-weight: 550;
+    margin-bottom: 0.35rem;
+}
+
+.admin-panel-sub {
+    color: #6b7280;
+    font-size: 0.9rem;
+    max-width: 60ch;
+}
+
+.admin-summary {
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.admin-btn {
+    border: 1px solid #bbbaba;
+    background-color: #fff;
+    border-radius: 7px;
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.admin-btn:hover:not(:disabled) {
+    background-color: #f5f5f5;
+}
+
+.admin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.admin-btn-primary {
+    background-color: #770900;
+    border-color: #770900;
+    color: #fff;
+}
+
+.admin-btn-primary:hover:not(:disabled) {
+    background-color: #a53c2e;
+}
+
+.admin-table-wrap {
+    overflow-x: auto;
+}
+
+.admin-stock-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.admin-stock-table th,
+.admin-stock-table td {
+    text-align: left;
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid #eef0f2;
+    vertical-align: middle;
+}
+
+.admin-stock-table th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+    border-bottom-color: #e5e7eb;
+}
+
+.admin-product-name {
+    font-weight: 550;
+}
+
+.stock-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.stock-step {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #c7c7c7;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.stock-step:hover {
+    background-color: #f5f5f5;
+}
+
+.stock-input {
+    width: 64px;
+    padding: 0.3rem 0.4rem;
+    border: 1px solid #c7c7c7;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+
+.status-badge.tersedia {
+    background-color: #e8f5eb;
+    color: #307246;
+}
+
+.status-badge.habis {
+    background-color: #fdeaea;
+    color: #b91c1c;
+}
+
+.stock-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.admin-feedback {
+    font-size: 0.78rem;
+    color: #6b7280;
+}
+
+.admin-feedback.ok {
+    color: #307246;
+}
+
+.admin-feedback.error {
+    color: #b91c1c;
+}
+
+.admin-loading {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+/* Sold-out product card on the customer menu. */
+
+.ready-status.habis span {
+    background-color: #fdeaea;
+    color: #b91c1c;
+}
+
+.data-menu > .menu.habis article {
+    opacity: 0.6;
 }
