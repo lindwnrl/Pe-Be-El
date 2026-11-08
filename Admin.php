@@ -12,38 +12,62 @@ $admin = auth_user();
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <title>Admin — Stok Produk</title>
 </head>
-<body>
-    <header class="site-header">
-        <div class="container site-header__inner">
+<body data-shell="sidebar">
+    <div class="shell">
+        <aside class="sidebar">
             <a href="/Dashboard.php" class="logo">
-                <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Nina Rasa — Home">
+                <span class="logo__mark" aria-hidden="true">N</span>
+                <span class="logo__text">
+                    <strong>NINA RASA</strong>
+                    <small>NIMIE &middot; POS &amp; INVENTORY</small>
+                </span>
             </a>
-            <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Buka navigasi">☰</button>
-            <nav class="site-nav" aria-label="Navigasi utama">
-                <ul id="site-nav"><!-- filled by nav.js --></ul>
-            </nav>
-        </div>
-    </header>
 
-    <main class="container admin-page">
-        <section class="admin-panel" aria-labelledby="admin-stock-heading">
-            <div class="admin-panel-head">
+            <p class="sidebar__label">Menu utama</p>
+            <nav class="sidebar__nav" id="sidebar-nav" aria-label="Navigasi admin">
+                <!-- filled by nav.js -->
+            </nav>
+
+            <p class="sidebar__foot">NIMIE v1.0 &middot; 2026</p>
+        </aside>
+
+        <main class="shell__main">
+            <div class="page-head">
                 <div>
-                    <h1 id="admin-stock-heading">Stok Produk</h1>
-                    <p class="admin-panel-sub">
-                        Atur jumlah produk jadi yang tersedia. Produk dengan stok 0
-                        otomatis ditandai habis dan tidak bisa dipesan pelanggan.
-                    </p>
+                    <h1 id="admin-stock-heading">Manajemen Stok</h1>
+                    <p>Atur ketersediaan produk jadi yang bisa dipesan pelanggan.</p>
                 </div>
-                <button type="button" id="admin-refresh" class="button button--ghost button--sm">Muat ulang</button>
+                <p class="page-head__meta" id="admin-date">Memuat&hellip;</p>
             </div>
 
-            <p id="admin-summary" class="admin-summary" role="status" aria-live="polite">
-                Memuat data stok...
-            </p>
+            <div class="stat-grid">
+                <article class="stat-card">
+                    <p class="stat-card__label">Total produk</p>
+                    <strong class="stat-card__value" id="stat-total">&mdash;</strong>
+                    <span class="stat-card__hint info">Di katalog</span>
+                </article>
+                <article class="stat-card">
+                    <p class="stat-card__label">Tersedia</p>
+                    <strong class="stat-card__value" id="stat-ready">&mdash;</strong>
+                    <span class="stat-card__hint ok">Bisa dipesan</span>
+                </article>
+                <article class="stat-card">
+                    <p class="stat-card__label">Habis</p>
+                    <strong class="stat-card__value" id="stat-empty">&mdash;</strong>
+                    <span class="stat-card__hint bad">Perlu diisi ulang</span>
+                </article>
+            </div>
+
+        <section class="admin-panel" aria-labelledby="admin-stock-heading">
+            <div class="admin-panel-head">
+                <p id="admin-summary" class="admin-summary" role="status" aria-live="polite">
+                    Memuat data stok...
+                </p>
+                <button type="button" id="admin-refresh" class="button button--ghost button--sm">Muat ulang</button>
+            </div>
 
             <div class="admin-table-wrap">
                 <table class="admin-stock-table">
@@ -65,9 +89,22 @@ $admin = auth_user();
                 </table>
             </div>
         </section>
-    </main>
 
-    <footer class="site-footer">
+            <footer class="site-footer">
+                <div class="site-footer__inner">
+                    <p class="site-footer__brand">Nina Rasa</p>
+                    <p>Bakso &amp; Mie Ayam · Buka 10.00–20.00</p>
+                    <nav aria-label="Navigasi footer">
+                        <a href="/Menu.php">Menu</a>
+                        <a href="/Kursi.php">Kursi</a>
+                        <a href="/Admin.php">Stok</a>
+                    </nav>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <footer class="site-footer" hidden>
         <div class="container site-footer__inner">
             <p class="site-footer__brand">Nina Rasa</p>
             <p>Bakso &amp; Mie Ayam · Buka 10.00–20.00</p>
@@ -87,6 +124,15 @@ $admin = auth_user();
 
         // Show any flash messages (e.g. redirected from Profile.php).
         showFlashMessage();
+
+        // Header date, per the dashboard reference.
+        (function setDate() {
+            var el = document.getElementById('admin-date');
+            if (!el) return;
+            el.textContent = new Intl.DateTimeFormat('id-ID', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            }).format(new Date());
+        })();
     </script>
     <script>
         (function () {
@@ -263,12 +309,20 @@ $admin = auth_user();
 
             let items = [];
 
+            const statTotal = document.getElementById('stat-total');
+            const statReady = document.getElementById('stat-ready');
+            const statEmpty = document.getElementById('stat-empty');
+
             function updateSummary() {
                 const total = items.length;
                 const habis = items.filter(function (i) { return i.stok <= 0; }).length;
                 summary.textContent =
                     total + ' produk · ' + habis + ' habis · ' +
                     (total - habis) + ' tersedia';
+
+                if (statTotal) statTotal.textContent = String(total);
+                if (statReady) statReady.textContent = String(total - habis);
+                if (statEmpty) statEmpty.textContent = String(habis);
             }
 
             function render(data) {

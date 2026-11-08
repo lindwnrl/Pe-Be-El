@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php require_once __DIR__ . '/includes/session-boot.php'; start_session(); ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,28 +8,44 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <main class="auth-page">
-        <section class="auth-card">
-            <div class="auth-card__art">
-                <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Nina Rasa">
-            </div>
+        <aside class="auth-brand">
+            <a href="/Dashboard.php" class="logo">
+                <span class="logo__mark" aria-hidden="true">N</span>
+                <span class="logo__text">
+                    <strong>NINA RASA</strong>
+                    <small>NIMIE &middot; POS &amp; INVENTORY</small>
+                </span>
+            </a>
 
-            <div class="auth-card__body">
-                <h1 class="auth-title">Masuk</h1>
-                <p class="auth-sub">Silakan masuk untuk melanjutkan pesanan Anda.</p>
+            <h1>Operasional kedai,<span>lebih rapi setiap hari.</span></h1>
+            <p>Kelola pesanan, pembayaran, dan ketersediaan menu dalam satu sistem
+               yang terintegrasi.</p>
+
+            <div class="auth-brand__card">
+                <small>NIMIE &middot; Nina Rasa</small>
+                <strong>Pesanan tercatat.<br><em>Stok terpantau.</em></strong>
+                <p>Satu alur untuk pelayanan yang lebih mudah.</p>
+            </div>
+        </aside>
+
+        <div class="auth-panel">
+            <section class="auth-card">
+                <h1 class="auth-title">Selamat datang</h1>
+                <p class="auth-sub">Masuk ke akun Nina Rasa Anda</p>
 
                 <form id="login-form" novalidate>
                     <div class="field">
                         <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="Username" required autocomplete="username">
+                        <input type="text" id="username" name="username" placeholder="Masukkan username" required autocomplete="username">
                     </div>
 
                     <div class="field">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+                        <input type="password" id="password" name="password" placeholder="Masukkan password" required autocomplete="current-password">
                     </div>
 
                     <p id="login-error" class="form-alert form-alert--error" role="alert" aria-live="polite"></p>
@@ -37,11 +53,11 @@
                     <button type="submit" class="button">Masuk</button>
 
                     <p class="auth-alt">
-                        Belum ada akun? <a href="/Register.php">Daftar yuk!</a>
+                        Belum ada akun? <a href="/Register.php">Daftar sekarang</a>
                     </p>
                 </form>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
     <footer class="site-footer">

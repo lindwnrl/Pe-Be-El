@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php require_once __DIR__ . '/includes/session-boot.php'; start_session(); ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,28 +8,44 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <main class="auth-page">
-        <section class="auth-card">
-            <div class="auth-card__art">
-                <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Nina Rasa">
-            </div>
+        <aside class="auth-brand">
+            <a href="/Dashboard.php" class="logo">
+                <span class="logo__mark" aria-hidden="true">N</span>
+                <span class="logo__text">
+                    <strong>NINA RASA</strong>
+                    <small>NIMIE &middot; POS &amp; INVENTORY</small>
+                </span>
+            </a>
 
-            <div class="auth-card__body">
-                <h1 class="auth-title">Daftar</h1>
-                <p class="auth-sub">Buat akun untuk memesan dan memesan meja.</p>
+            <h1>Daftar sekali,<span>pesan kapan saja.</span></h1>
+            <p>Buat akun untuk memesan makanan, memesan meja, dan menyimpan profil
+               Anda di Nina Rasa.</p>
+
+            <div class="auth-brand__card">
+                <small>NIMIE &middot; Nina Rasa</small>
+                <strong>Pesan mudah.<br><em>Makan lebih seru.</em></strong>
+                <p>Data Anda tersimpan dan siap dipakai lagi.</p>
+            </div>
+        </aside>
+
+        <div class="auth-panel">
+            <section class="auth-card">
+                <h1 class="auth-title">Buat akun</h1>
+                <p class="auth-sub">Isi data di bawah untuk mulai memesan</p>
 
                 <form id="register-form" novalidate>
                     <div class="field">
                         <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="Username" required autocomplete="username">
+                        <input type="text" id="username" name="username" placeholder="Masukkan username" required autocomplete="username">
                     </div>
 
                     <div class="field">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Password" required autocomplete="new-password">
+                        <input type="password" id="password" name="password" placeholder="Minimal 6 karakter" required autocomplete="new-password">
                     </div>
 
                     <div class="field">
@@ -45,8 +61,8 @@
                         Sudah punya akun? <a href="/Login.php">Masuk di sini</a>
                     </p>
                 </form>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
     <footer class="site-footer">

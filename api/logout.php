@@ -2,14 +2,13 @@
 declare(strict_types=1);
 
 require __DIR__ . '/db.php';
+require __DIR__ . '/../includes/session-boot.php';
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     json_response(['ok' => false, 'error' => 'Metode tidak diizinkan.'], 405);
 }
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+start_session();
 
 $_SESSION = [];
 

@@ -2,10 +2,9 @@
 declare(strict_types=1);
 
 require __DIR__ . '/db.php';
+require __DIR__ . '/../includes/session-boot.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+start_session();
 
 function require_login(): void
 {

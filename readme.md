@@ -15,3 +15,6 @@ Add Session untuk seluruh fitur
 
 ## Selasa-November-3
 Pergantian dari static .html menjadi .php.Juga penambahan autentikasi login dan register
+
+## Senin-November-9
+Re-design tampilan dan perombakan landing page

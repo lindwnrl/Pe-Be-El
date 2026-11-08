@@ -8,12 +8,12 @@ declare(strict_types=1);
  * populates after verifying credentials. Never trust a request parameter.
  */
 
+require_once __DIR__ . '/session-boot.php';
+
 /** Start the PHP session once. */
 function auth_start(): void
 {
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
-    }
+    start_session();
 }
 
 /**

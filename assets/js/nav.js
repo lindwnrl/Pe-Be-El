@@ -55,8 +55,8 @@
 
     /* ── Same-page anchors ─────────────────────────────────────────────── */
 
-    function wireAnchorScroll(list) {
-        list.addEventListener('click', function (e) {
+    function wireAnchorScroll(root) {
+        root.addEventListener('click', function (e) {
             var link = e.target.closest('a[href^="#"]');
             if (!link) return;
 
@@ -153,6 +153,68 @@
         setActive(sections[0].id);
     }
 
+    /* ── Sidebar (admin / owner shell) ─────────────────────────────────── */
+
+    function buildSidebar() {
+        var nav = document.getElementById('sidebar-nav');
+        if (!nav) return null;
+
+        var path = window.location.pathname.replace(/\/+$/, '');
+
+        var items = [];
+
+        if (isAdmin()) {
+            items.push({ label: 'Stok Produk', href: '/Admin.php', id: 'nav-admin-stock', icon: '▤' });
+        }
+
+        items.push(
+            { label: 'Menu', href: '/Menu.php', id: 'nav-menu', icon: '◇' },
+            { label: 'Kursi', href: '/Kursi.php', id: 'nav-kursi', icon: '▣' },
+            { label: 'Profile', href: '/Profile.php', id: 'nav-profile', icon: '◉' }
+        );
+
+        var links = items.map(function (item) {
+            var a = document.createElement('a');
+            a.href = item.href;
+            a.id = item.id;
+
+            var icon = document.createElement('span');
+            icon.className = 'sidebar__icon';
+            icon.setAttribute('aria-hidden', 'true');
+            icon.textContent = item.icon;
+
+            var text = document.createElement('span');
+            text.textContent = item.label;
+
+            a.append(icon, text);
+
+            if (path === item.href) {
+                a.classList.add('is-active');
+                a.setAttribute('aria-current', 'page');
+            }
+            return a;
+        });
+
+        var logout = document.createElement('a');
+        logout.href = '#';
+        logout.id = 'nav-logout';
+        logout.innerHTML = '<span class="sidebar__icon" aria-hidden="true">⏻</span><span>Logout</span>';
+        logout.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (!confirm('Yakin ingin keluar?')) return;
+            fetch('/api/logout.php', { method: 'POST', credentials: 'same-origin' })
+                .catch(function () {})
+                .then(function () {
+                    clearSession();
+                    window.location.href = '/Dashboard.php';
+                });
+        });
+        links.push(logout);
+
+        nav.replaceChildren.apply(nav, links);
+        return nav;
+    }
+
     /* ── Render ────────────────────────────────────────────────────────── */
 
     function buildNav() {
@@ -174,10 +236,14 @@
             ];
         } else {
             items = [
-                createItem('Home', '/Dashboard.php'),
                 createItem('Menu', '/Menu.php', 'nav-menu'),
                 createItem('Kursi', '/Kursi.php')
             ];
+
+            // Home is the public landing page, so it belongs to guests only.
+            if (!loggedIn) {
+                items.unshift(createItem('Home', '/Dashboard.php'));
+            }
 
             if (loggedIn) {
                 items.push(createItem('Profile', '/Profile.php', 'nav-profile'));
@@ -195,7 +261,8 @@
         list.replaceChildren.apply(list, items);
 
         if (isLanding && !loggedIn) {
-            wireAnchorScroll(list);
+            // Bind once on the document so hero CTAs and footer links scroll too.
+            wireAnchorScroll(document);
             wireScrollSpy(list);
         } else {
             markActiveByPath(list);
@@ -243,6 +310,7 @@
         update();
     }
 
+    buildSidebar();
     buildNav();
     wireToggle();
     wireScrollShadow();

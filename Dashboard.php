@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-session_start();
-
 require_once __DIR__ . '/includes/auth.php';
+
+auth_start();
 
 // The landing page is public. Signed-in users belong inside the app.
 if (auth_user() !== null) {
@@ -12,11 +12,19 @@ if (auth_user() !== null) {
 }
 
 // Single place to edit the address shown on the landing page.
-const NINA_RASA_ALAMAT = 'Alamat belum diisi — Jl. Contoh No. 1, Malang, Jawa Timur';
+const NINA_RASA_ALAMAT = 'Jl. Cianjur No.1b, Penanggungan, Kec. Klojen, Kota Malang, Jawa Timur 65113';
 const NINA_RASA_KOTA   = 'Malang';
 const NINA_RASA_TELEPON = ''; // rendered only when non-empty
 
-$mapsQuery = rawurlencode(NINA_RASA_ALAMAT . ', ' . NINA_RASA_KOTA);
+// Exact position of "Bakso Solo dan Mie Ayam Nina Rasa" on Google Maps.
+const NINA_RASA_MAPS_URL =
+    'https://www.google.com/maps/place/Bakso+Solo+dan+Mie+Ayam+Nina+Rasa/'
+    . '@-7.958891,112.6223652,17z/data=!3m1!4b1!4m6!3m5!1s0x2dd6295f9ab8b65d'
+    . ':0xa7a8f8c95f22897b!8m2!3d-7.958891!4d112.6223652!16s%2Fg%2F11h_3ytkjw';
+
+// Key-free Google Maps embed (no API key needed).
+const NINA_RASA_MAPS_EMBED =
+    'https://maps.google.com/maps?q=-7.958891,112.6223652&z=17&hl=id&output=embed';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -28,7 +36,7 @@ $mapsQuery = rawurlencode(NINA_RASA_ALAMAT . ', ' . NINA_RASA_KOTA);
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <title>Nina Rasa — Bakso &amp; Mie Ayam, Malang</title>
 </head>
 <body data-page="landing">
@@ -37,7 +45,11 @@ $mapsQuery = rawurlencode(NINA_RASA_ALAMAT . ', ' . NINA_RASA_KOTA);
     <header class="site-header">
         <div class="container site-header__inner">
             <a href="/Dashboard.php" class="logo">
-                <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Nina Rasa — beranda">
+                <span class="logo__mark" aria-hidden="true">N</span>
+                <span class="logo__text">
+                    <strong>NINA RASA</strong>
+                    <small>NIMIE &middot; POS &amp; INVENTORY</small>
+                </span>
             </a>
             <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Buka navigasi">☰</button>
             <nav class="site-nav" aria-label="Navigasi utama">
@@ -93,7 +105,7 @@ $mapsQuery = rawurlencode(NINA_RASA_ALAMAT . ', ' . NINA_RASA_KOTA);
 
                     <span class="hero-sticker" aria-hidden="true">
                         <span>Sejak</span>
-                        <strong>Nina Rasa</strong>
+                        <strong>1980</strong>
                     </span>
                 </div>
             </div>
@@ -167,60 +179,75 @@ $mapsQuery = rawurlencode(NINA_RASA_ALAMAT . ', ' . NINA_RASA_KOTA);
 
         <!-- ══ 4. Location ══════════════════════════════════════════════════ -->
         <section id="location" class="landing-section landing-section--location" aria-labelledby="location-title">
-            <div class="container location-layout">
-                <div class="location-copy">
-                    <p class="section-eyebrow">Lokasi</p>
-                    <h2 id="location-title">Makan enak, ada <em>dekat.</em></h2>
-                    <p class="location-intro">
-                        Mampir untuk menikmati hidangan hangat langsung dari dapur kami di
-                        <?= htmlspecialchars(NINA_RASA_KOTA) ?>.
-                    </p>
+            <div class="container">
+                <div class="location-head">
+                    <div>
+                        <p class="section-eyebrow">Lokasi</p>
+                        <h2 id="location-title">Makan enak, ada <em>dekat.</em></h2>
+                        <p class="location-intro">
+                            Temukan kami di <?= htmlspecialchars(NINA_RASA_KOTA) ?>. Mampir untuk
+                            menikmati hidangan hangat langsung dari dapur kami.
+                        </p>
+                    </div>
 
-                    <div class="location-card">
-                        <div class="location-row">
-                            <span class="location-icon" aria-hidden="true">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                     stroke-linejoin="round">
-                                    <path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"></path>
-                                    <circle cx="12" cy="10" r="2.6"></circle>
-                                </svg>
-                            </span>
-                            <div>
-                                <h3>Alamat</h3>
-                                <p><?= htmlspecialchars(NINA_RASA_ALAMAT) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="location-row">
-                            <span class="location-icon" aria-hidden="true">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                     stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                    <path d="M12 7v5l3.2 2"></path>
-                                </svg>
-                            </span>
-                            <div>
-                                <h3>Jam buka</h3>
-                                <p>Setiap hari · 10.00–20.00 WIB</p>
-                            </div>
-                        </div>
-
-                        <a class="button button--ghost location-button"
-                           href="https://www.google.com/maps/search/?api=1&amp;query=<?= $mapsQuery ?>"
-                           target="_blank" rel="noopener noreferrer">Buka di Google Maps</a>
+                    <div class="location-actions">
+                        <a class="button" href="#menu">Lihat menu</a>
+                        <a class="button button--ghost"
+                           href="<?= htmlspecialchars(NINA_RASA_MAPS_URL) ?>"
+                           target="_blank" rel="noopener noreferrer">Petunjuk arah</a>
                     </div>
                 </div>
 
-                <div class="location-map" aria-hidden="true">
-                    <span class="location-pin">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6A2.6 2.6 0 1 1 12 6.4a2.6 2.6 0 0 1 0 5.2z"></path>
-                        </svg>
-                    </span>
-                    <span class="location-map__label"><?= htmlspecialchars(NINA_RASA_KOTA) ?></span>
-                </div>
+                <article class="branch">
+                    <div class="branch__map">
+                        <iframe
+                            src="<?= htmlspecialchars(NINA_RASA_MAPS_EMBED) ?>"
+                            title="Peta lokasi Bakso Solo dan Mie Ayam Nina Rasa di Malang"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            allowfullscreen></iframe>
+                    </div>
+
+                    <div class="branch__info">
+                        <p class="branch__tag">Cabang Malang</p>
+                        <h3>Bakso Solo &amp; Mie Ayam Nina Rasa</h3>
+
+                        <ul class="branch__facts">
+                            <li>
+                                <span class="branch__icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"></path>
+                                        <circle cx="12" cy="10" r="2.6"></circle>
+                                    </svg>
+                                </span>
+                                <span>
+                                    <strong>Alamat</strong>
+                                    <?= htmlspecialchars(NINA_RASA_ALAMAT) ?>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="branch__icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                        <path d="M12 7v5l3.2 2"></path>
+                                    </svg>
+                                </span>
+                                <span>
+                                    <strong>Jam buka</strong>
+                                    Setiap hari · 10.00–20.00 WIB
+                                </span>
+                            </li>
+                        </ul>
+
+                        <a class="button button--ghost branch__link"
+                           href="<?= htmlspecialchars(NINA_RASA_MAPS_URL) ?>"
+                           target="_blank" rel="noopener noreferrer">Buka di Google Maps</a>
+                    </div>
+                </article>
             </div>
         </section>
 

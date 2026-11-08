@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php require_once __DIR__ . '/includes/session-boot.php'; start_session(); ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,22 +8,29 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="site-header">
-        <div class="container site-header__inner">
+    <div class="shell">
+        <aside class="sidebar">
             <a href="/Dashboard.php" class="logo">
-                <img src="/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png" alt="Nina Rasa — Home">
+                <span class="logo__mark" aria-hidden="true">N</span>
+                <span class="logo__text">
+                    <strong>NINA RASA</strong>
+                    <small>NIMIE &middot; POS &amp; INVENTORY</small>
+                </span>
             </a>
-            <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Buka navigasi">☰</button>
-            <nav class="site-nav" aria-label="Navigasi utama">
-                <ul id="site-nav"><!-- filled by nav.js --></ul>
-            </nav>
-        </div>
-    </header>
 
-    <main class="container menu-info">
+            <p class="sidebar__label">Menu utama</p>
+            <nav class="sidebar__nav" id="sidebar-nav" aria-label="Navigasi utama">
+                <!-- filled by nav.js -->
+            </nav>
+
+            <p class="sidebar__foot">NIMIE v1.0 &middot; 2026</p>
+        </aside>
+
+        <main class="shell__main">
+    <div class="container menu-info">
         <div class="welcoming-info">
             <p>Dapur Nina Rasa</p>
             <h1>Silakan pilih menu kesukaanmu</h1>
@@ -339,7 +346,8 @@
 
             <p id="order-result" role="status" aria-live="polite" hidden></p>
         </section>
-    </main>
+        </main>
+    </div>
 
     <footer class="site-footer">
         <div class="container site-footer__inner">
