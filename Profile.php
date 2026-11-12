@@ -73,8 +73,8 @@
                     <label for="tanggal-lahir">Tanggal lahir <span class="req">*</span></label>
                     <span class="tanggal-field">
                         <input type="date" name="tanggal-lahir" id="tanggal-lahir" required>
-                        <button type="submit" id="simpan-profil" class="button">Simpan Profil</button>
                     </span>
+                    <button type="submit" id="simpan-profil" class="button">Simpan Profil</button>
                 </div>
             </form>
 
@@ -87,7 +87,7 @@
         </main>
     </div>
 
-    <footer class="site-footer">
+    <!-- <footer class="site-footer">
         <div class="container site-footer__inner">
             <p class="site-footer__brand">Nina Rasa</p>
             <p>Bakso &amp; Mie Ayam · Buka 10.00–20.00</p>
@@ -97,7 +97,7 @@
                 <a href="/Kursi.php">Kursi</a>
             </nav>
         </div>
-    </footer>
+    </footer> -->
 
     <!-- session.js MUST be loaded before profile.js -->
     <script src="/assets/js/session.js"></script>

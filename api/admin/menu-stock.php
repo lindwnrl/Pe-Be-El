@@ -43,6 +43,7 @@ if ($method === 'GET') {
         'SELECT m.menu_id, m.nama_menu, m.harga, m.stok, m.status, '
         . 'k.nama_kategori '
         . 'FROM menu m LEFT JOIN kategori_menu k ON k.kategori_id = m.kategori_id '
+        . 'WHERE m.aktif = TRUE '
         . 'ORDER BY m.menu_id'
     )->fetchAll();
 

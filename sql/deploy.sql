@@ -41,7 +41,11 @@ CREATE TABLE IF NOT EXISTS pesanan (
     tanggal_pesanan TIMESTAMP NOT NULL,
     total_harga NUMERIC(10,2) NOT NULL,
     status_pesanan VARCHAR(30) NOT NULL,
-    pelanggan_id INTEGER REFERENCES pelanggan(pelanggan_id)
+    pelanggan_id INTEGER REFERENCES pelanggan(pelanggan_id),
+    meja VARCHAR(10),
+    jenis_pesanan VARCHAR(20),
+    catatan VARCHAR(500),
+    nama_pemesan VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS detail_pesanan (
@@ -87,7 +91,7 @@ CREATE TABLE IF NOT EXISTS akun (
     role VARCHAR(20) NOT NULL,
     pelanggan_id INTEGER UNIQUE REFERENCES pelanggan(pelanggan_id),
 
-    CONSTRAINT cek_role CHECK (role IN ('pengguna', 'admin'))
+    CONSTRAINT cek_role CHECK (role IN ('pengguna', 'admin', 'owner'))
 );
 
 -- 4. Profile columns (migration 001) -----------------------------------------
@@ -98,7 +102,9 @@ ALTER TABLE pelanggan ADD COLUMN IF NOT EXISTS tanggal_lahir DATE;
 
 -- 5. Product images + stock guard (migration 003) ----------------------------
 
-ALTER TABLE menu ADD COLUMN IF NOT EXISTS gambar VARCHAR(255);
+ALTER TABLE menu ADD COLUMN IF NOT EXISTS gambar TEXT;
+ALTER TABLE menu ADD COLUMN IF NOT EXISTS deskripsi VARCHAR(255);
+ALTER TABLE menu ADD COLUMN IF NOT EXISTS aktif BOOLEAN NOT NULL DEFAULT TRUE;
 
 DO $$
 BEGIN
@@ -151,6 +157,35 @@ SELECT setval(
     pg_get_serial_sequence('menu', 'menu_id'),
     (SELECT COALESCE(MAX(menu_id), 1) FROM menu)
 );
+
+-- 7a. Reservations ----------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS reservasi (
+    reservasi_id   SERIAL PRIMARY KEY,
+    meja           VARCHAR(10) NOT NULL,
+    pelanggan_id   INTEGER REFERENCES pelanggan(pelanggan_id),
+    nama_pemesan   VARCHAR(100) NOT NULL,
+    jumlah_orang   INTEGER NOT NULL,
+    tanggal        DATE NOT NULL,
+    waktu          TIME NOT NULL,
+    status         VARCHAR(20) NOT NULL DEFAULT 'aktif',
+    dibuat_pada    TIMESTAMP NOT NULL DEFAULT NOW(),
+    dirilis_pada   TIMESTAMP,
+
+    CONSTRAINT cek_reservasi_status CHECK (status IN ('aktif', 'selesai')),
+    CONSTRAINT cek_reservasi_orang  CHECK (jumlah_orang BETWEEN 1 AND 20)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS reservasi_meja_aktif_idx
+    ON reservasi (meja) WHERE status = 'aktif';
+
+CREATE INDEX IF NOT EXISTS reservasi_status_idx
+    ON reservasi (status, tanggal);
+
+-- 7b. Sales indexes ---------------------------------------------------------
+
+CREATE INDEX IF NOT EXISTS pesanan_tanggal_idx ON pesanan (tanggal_pesanan);
+CREATE INDEX IF NOT EXISTS detail_pesanan_pesanan_idx ON detail_pesanan (pesanan_id);
 
 -- 8. Admin account -----------------------------------------------------------
 -- CHANGE THE PASSWORD before running this in production.

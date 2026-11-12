@@ -1,4 +1,26 @@
-<?php require_once __DIR__ . '/includes/session-boot.php'; start_session(); ?>
+<?php
+require_once __DIR__ . '/includes/session-boot.php';
+require_once __DIR__ . '/includes/auth.php';
+
+start_session();
+$isStaff = auth_is_staff();
+
+require_once __DIR__ . '/api/db.php';
+
+$pdo = db();
+
+$menuItems = $pdo->query(
+    'SELECT m.menu_id, m.nama_menu, m.harga, m.stok, m.gambar, k.nama_kategori '
+    . 'FROM menu m LEFT JOIN kategori_menu k ON k.kategori_id = m.kategori_id '
+    . 'WHERE m.aktif = TRUE ORDER BY m.menu_id'
+)->fetchAll();
+
+$kategoriList = $pdo->query(
+    'SELECT nama_kategori FROM kategori_menu ORDER BY nama_kategori'
+)->fetchAll();
+
+$rupiah = static fn (float $value): string => 'Rp ' . number_format($value, 0, ',', '.');
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -32,10 +54,16 @@
         <main class="shell__main">
     <div class="container menu-info">
         <div class="welcoming-info">
-            <p>Dapur Nina Rasa</p>
-            <h1>Silakan pilih menu kesukaanmu</h1>
-            <p>Dibuat dengan sepenuh hati</p>
-            <span class="status-buka" aria-hidden="true">Buka hari ini · 10.00–20.00</span>
+            <?php if ($isStaff): ?>
+                <p>Mode staf</p>
+                <h1>Katalog menu</h1>
+                <p>Pratinjau tampilan pelanggan. Stok diatur di halaman admin.</p>
+            <?php else: ?>
+                <p>Dapur Nina Rasa</p>
+                <h1>Silakan pilih menu kesukaanmu</h1>
+                <p>Dibuat dengan sepenuh hati</p>
+                <span class="status-buka" aria-hidden="true">Buka hari ini · 10.00–20.00</span>
+            <?php endif; ?>
         </div>
 
         <section class="menu-tools" aria-label="Cari dan filter menu">
@@ -51,10 +79,9 @@
                 <span>Kategori:</span>
                 <select id="menu-category">
                     <option value="Semua">Semua</option>
-                    <option value="Bakso">Bakso</option>
-                    <option value="Mie Ayam">Mie Ayam</option>
-                    <option value="Minuman">Minuman</option>
-                    <option value="Tambahan">Tambahan</option>
+<?php foreach ($kategoriList as $kat): ?>
+                    <option value="<?= htmlspecialchars($kat['nama_kategori']) ?>"><?= htmlspecialchars($kat['nama_kategori']) ?></option>
+<?php endforeach; ?>
                 </select>
             </label>
         </section>
@@ -63,203 +90,35 @@
 
         <div class="menu-layout">
             <div class="data-menu">
-                <div class="menu" data-menu-id="1" data-category="Bakso" data-price="20000">
+<?php foreach ($menuItems as $item): ?>
+<?php
+    $gambar = $item['gambar'] !== null && $item['gambar'] !== ''
+        ? $item['gambar']
+        : '/assets/documentasi/1f5515c814af4b017c4106159f9214a88b93d314.png';
+    $nama   = (string) $item['nama_menu'];
+    $kategori = (string) ($item['nama_kategori'] ?? '');
+?>
+                <div class="menu"
+                     data-menu-id="<?= (int) $item['menu_id'] ?>"
+                     data-category="<?= htmlspecialchars($kategori) ?>"
+                     data-price="<?= (int) $item['harga'] ?>">
                     <article>
                         <div class="ready-status">
                             <span>Ready</span>
-                            <img src="/assets/documentasi/image3.png" alt="Bakso Solo Campur">
+                            <img src="<?= htmlspecialchars($gambar) ?>" alt="<?= htmlspecialchars($nama) ?>">
                         </div>
-                        <p>Bakso Solo Campur</p>
+                        <p><?= htmlspecialchars($nama) ?></p>
                         <div class="buy-row">
-                            <p>Rp 20.000</p>
+                            <p><?= $rupiah((float) $item['harga']) ?></p>
                             <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Campur" disabled>−</button>
+                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah <?= htmlspecialchars($nama) ?>" disabled>&minus;</button>
                                 <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Bakso Solo Campur">+</button>
+                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah <?= htmlspecialchars($nama) ?>">+</button>
                             </div>
                         </div>
                     </article>
                 </div>
-
-                <div class="menu" data-menu-id="2" data-category="Bakso" data-price="20000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image4.png" alt="Bakso Solo Tanpa Tahu">
-                        </div>
-                        <p>Bakso Solo Tanpa Tahu</p>
-                        <div class="buy-row">
-                            <p>Rp 20.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Bakso Solo Tanpa Tahu" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Bakso Solo Tanpa Tahu">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="3" data-category="Tambahan" data-price="15000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image5.png" alt="Cilok 1 Porsi">
-                        </div>
-                        <p>Cilok 1 Porsi</p>
-                        <div class="buy-row">
-                            <p>Rp 15.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Cilok 1 Porsi" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Cilok 1 Porsi">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="4" data-category="Mie Ayam" data-price="15000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image1.png" alt="Mie Ayam Mozarella">
-                        </div>
-                        <p>Mie Ayam Mozarella</p>
-                        <div class="buy-row">
-                            <p>Rp 15.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Mie Ayam Mozarella" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Mie Ayam Mozarella">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="5" data-category="Mie Ayam" data-price="15000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image6.png" alt="Mie Ayam Ceker">
-                        </div>
-                        <p>Mie Ayam Ceker</p>
-                        <div class="buy-row">
-                            <p>Rp 15.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Mie Ayam Ceker" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Mie Ayam Ceker">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="6" data-category="Mie Ayam" data-price="10000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image7.png" alt="Mie Ayam Original">
-                        </div>
-                        <p>Mie Ayam Original</p>
-                        <div class="buy-row">
-                            <p>Rp 10.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Mie Ayam Original" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Mie Ayam Original">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="7" data-category="Minuman" data-price="4000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image8.png" alt="Air Mineral">
-                        </div>
-                        <p>Air Mineral</p>
-                        <div class="buy-row">
-                            <p>Rp 4.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Air Mineral" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Air Mineral">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="8" data-category="Minuman" data-price="5000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image9.png" alt="Es Jeruk">
-                        </div>
-                        <p>Es Jeruk</p>
-                        <div class="buy-row">
-                            <p>Rp 5.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Es Jeruk" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Es Jeruk">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="9" data-category="Minuman" data-price="4000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image10.png" alt="Es Teh">
-                        </div>
-                        <p>Es Teh</p>
-                        <div class="buy-row">
-                            <p>Rp 4.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Es Teh" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Es Teh">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="10" data-category="Tambahan" data-price="5000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image11.png" alt="Ceker Ayam">
-                        </div>
-                        <p>Ceker Ayam</p>
-                        <div class="buy-row">
-                            <p>Rp 5.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Ceker Ayam" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Ceker Ayam">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="menu" data-menu-id="11" data-category="Tambahan" data-price="5000">
-                    <article>
-                        <div class="ready-status">
-                            <span>Ready</span>
-                            <img src="/assets/documentasi/image12.png" alt="Pangsit Goreng">
-                        </div>
-                        <p>Pangsit Goreng</p>
-                        <div class="buy-row">
-                            <p>Rp 5.000</p>
-                            <div class="jumlah-barang">
-                                <button type="button" class="quantity-btn minus" aria-label="Kurangi jumlah Pangsit Goreng" disabled>−</button>
-                                <span class="quantity-value" aria-live="polite">0</span>
-                                <button type="button" class="quantity-btn plus" aria-label="Tambah jumlah Pangsit Goreng">+</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
+<?php endforeach; ?>
             </div>
 
             <section class="cart-summary" aria-labelledby="cart-heading">
@@ -349,7 +208,7 @@
         </main>
     </div>
 
-    <footer class="site-footer">
+    <!-- <footer class="site-footer">
         <div class="container site-footer__inner">
             <p class="site-footer__brand">Nina Rasa</p>
             <p>Bakso &amp; Mie Ayam · Buka 10.00–20.00</p>
@@ -359,7 +218,7 @@
                 <a href="/Kursi.php">Kursi</a>
             </nav>
         </div>
-    </footer>
+    </footer> -->
 
     <script src="/assets/js/session.js"></script>
     <script src="/assets/js/nav.js"></script>

@@ -16,7 +16,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
 
 try {
     $rows = db()->query(
-        'SELECT menu_id, nama_menu, stok FROM menu ORDER BY menu_id'
+        'SELECT menu_id, nama_menu, stok FROM menu WHERE aktif = TRUE ORDER BY menu_id'
     )->fetchAll();
 } catch (PDOException $e) {
     error_log('menu-stock.php: ' . $e->getMessage());

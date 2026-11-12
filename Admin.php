@@ -43,6 +43,41 @@ $admin = auth_user();
                 <p class="page-head__meta" id="admin-date">Memuat&hellip;</p>
             </div>
 
+            <div class="report-row">
+                <?php require __DIR__ . '/includes/sales-panel.php'; ?>
+                <?php require __DIR__ . '/includes/best-sellers-panel.php'; ?>
+            </div>
+
+            <section class="panel" aria-labelledby="admin-meja-title">
+                <div class="panel__head">
+                    <div>
+                        <h2 id="admin-meja-title">Meja terisi</h2>
+                        <p>Meja tetap terisi sampai diaktifkan kembali di sini.</p>
+                    </div>
+                    <button type="button" id="admin-reservasi-refresh" class="button button--ghost button--sm">Muat ulang</button>
+                </div>
+
+                <p id="admin-reservasi-note" class="form-alert" role="status" aria-live="polite"></p>
+
+                <div class="admin-table-wrap">
+                    <table class="admin-stock-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Meja</th>
+                                <th scope="col">Pemesan</th>
+                                <th scope="col">Jumlah</th>
+                                <th scope="col">Jadwal</th>
+                                <th scope="col">Sejak</th>
+                                <th scope="col">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-reservasi-body">
+                            <tr><td colspan="6" class="admin-loading">Memuat data meja...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <div class="stat-grid">
                 <article class="stat-card">
                     <p class="stat-card__label">Total produk</p>
@@ -90,7 +125,7 @@ $admin = auth_user();
             </div>
         </section>
 
-            <footer class="site-footer">
+            <!-- <footer class="site-footer">
                 <div class="site-footer__inner">
                     <p class="site-footer__brand">Nina Rasa</p>
                     <p>Bakso &amp; Mie Ayam · Buka 10.00–20.00</p>
@@ -100,11 +135,11 @@ $admin = auth_user();
                         <a href="/Admin.php">Stok</a>
                     </nav>
                 </div>
-            </footer>
+            </footer> -->
         </main>
     </div>
 
-    <footer class="site-footer" hidden>
+    <!-- <footer class="site-footer" hidden>
         <div class="container site-footer__inner">
             <p class="site-footer__brand">Nina Rasa</p>
             <p>Bakso &amp; Mie Ayam · Buka 10.00–20.00</p>
@@ -114,10 +149,13 @@ $admin = auth_user();
                 <a href="/Kursi.php">Kursi</a>
             </nav>
         </div>
-    </footer>
+    </footer> -->
 
     <script src="/assets/js/session.js"></script>
     <script src="/assets/js/nav.js"></script>
+    <script src="/assets/js/sales-chart.js"></script>
+    <script src="/assets/js/best-sellers.js"></script>
+    <script src="/assets/js/admin-reservasi.js"></script>
     <script>
         // Admins must complete their profile before using the console.
         enforceProfileGate();

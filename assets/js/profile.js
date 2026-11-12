@@ -166,13 +166,23 @@ profileForm.addEventListener("submit", function (event) {
                 isProfileComplete: true
             });
 
+            var destination = "/Dashboard.php";
+            var destinationName = "Dashboard";
+
+            if (isAdmin()) {
+                destination = "/Admin.php";
+                destinationName = "Admin";
+            } else if (isOwner()) {
+                destination = "/Owner.php";
+                destinationName = "Owner";
+            }
+
             showSuccessMessage(
-                "Profil berhasil disimpan! Mengarahkan ke " +
-                (isAdmin() ? "Admin..." : "Dashboard...")
+                "Profil berhasil disimpan! Mengarahkan ke " + destinationName + "..."
             );
 
             setTimeout(function () {
-                window.location.href = isAdmin() ? "/Admin.php" : "/Dashboard.php";
+                window.location.href = destination;
             }, 1500);
         })
         .catch(function () {

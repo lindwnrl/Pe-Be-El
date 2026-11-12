@@ -1,4 +1,12 @@
-<?php require_once __DIR__ . '/includes/session-boot.php'; start_session(); ?>
+<?php
+require_once __DIR__ . '/includes/session-boot.php';
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/tables.php';
+
+start_session();
+$isStaff = auth_is_staff();
+$tables  = nina_tables();
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -32,8 +40,13 @@
         <main class="shell__main">
     <div class="container reservation-page">
         <section class="reservation-intro">
-            <h1>Pilih Meja Anda</h1>
-            <p>Temukan meja yang nyaman untuk menikmati hidangan bersama orang terdekat.</p>
+            <?php if ($isStaff): ?>
+                <h1>Status Meja</h1>
+                <p>Pantau meja yang sedang dipakai. Meja tetap terisi sampai admin mengaktifkannya kembali.</p>
+            <?php else: ?>
+                <h1>Pilih Meja</h1>
+                <p>Tentukan jumlah orang, tanggal, dan waktu, lalu pilih meja yang tersedia.</p>
+            <?php endif; ?>
         </section>
 
         <div class="reservation-layout">
@@ -86,56 +99,14 @@
                 <div class="floor-plan">
                     <div class="entrance">Pintu Masuk</div>
 
-                    <button type="button" class="table available" data-table="MO1" data-capacity="4">
-                        <strong>MO1</strong>
-                        <span>4 kursi</span>
+<?php foreach ($tables as $id => $capacity): ?>
+                    <button type="button" class="table available"
+                            data-table="<?= htmlspecialchars($id) ?>"
+                            data-capacity="<?= (int) $capacity ?>">
+                        <strong><?= htmlspecialchars($id) ?></strong>
+                        <span><?= (int) $capacity ?> kursi</span>
                     </button>
-
-                    <button type="button" class="table available" data-table="MO2" data-capacity="4">
-                        <strong>MO2</strong>
-                        <span>4 kursi</span>
-                    </button>
-
-                    <button type="button" class="table available" data-table="MO3" data-capacity="4">
-                        <strong>MO3</strong>
-                        <span>4 kursi</span>
-                    </button>
-
-                    <button type="button" class="table available" data-table="MO4" data-capacity="6">
-                        <strong>MO4</strong>
-                        <span>6 kursi</span>
-                    </button>
-
-                    <button type="button" class="table available" data-table="MO5" data-capacity="6">
-                        <strong>MO5</strong>
-                        <span>6 kursi</span>
-                    </button>
-
-                    <button type="button" class="table unavailable" data-table="MO6" data-capacity="2" disabled>
-                        <strong>MO6</strong>
-                        <span>2 kursi</span>
-                        <small>Terisi</small>
-                    </button>
-
-                    <button type="button" class="table available" data-table="MO7" data-capacity="2">
-                        <strong>MO7</strong>
-                        <span>2 kursi</span>
-                    </button>
-
-                    <button type="button" class="table available" data-table="MO8" data-capacity="4">
-                        <strong>MO8</strong>
-                        <span>4 kursi</span>
-                    </button>
-
-                    <button type="button" class="table available" data-table="MO9" data-capacity="4">
-                        <strong>MO9</strong>
-                        <span>4 kursi</span>
-                    </button>
-
-                    <button type="button" class="table available" data-table="MO10" data-capacity="8">
-                        <strong>MO10</strong>
-                        <span>8 kursi</span>
-                    </button>
+<?php endforeach; ?>
                 </div>
 
                 <div class="table-legend">
@@ -173,7 +144,7 @@
         </main>
     </div>
 
-    <footer class="site-footer">
+    <!-- <footer class="site-footer">
         <div class="container site-footer__inner">
             <p class="site-footer__brand">Nina Rasa</p>
             <p>Bakso &amp; Mie Ayam · Buka 10.00–20.00</p>
@@ -183,7 +154,7 @@
                 <a href="/Kursi.php">Kursi</a>
             </nav>
         </div>
-    </footer>
+    </footer> -->
 
     <script src="/assets/js/session.js"></script>
     <script src="/assets/js/nav.js"></script>

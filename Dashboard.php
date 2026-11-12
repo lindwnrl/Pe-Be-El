@@ -171,9 +171,9 @@ const NINA_RASA_MAPS_EMBED =
                     <span class="rail-progress__bar" id="rail-progress-bar"></span>
                 </div>
 
-                <p class="rail-foot">
+                <!-- <p class="rail-foot">
                     <a class="button" href="/Menu.php">Lihat menu lengkap &amp; pesan</a>
-                </p>
+                </p> -->
             </div>
         </section>
 

@@ -160,11 +160,18 @@
         if (!nav) return null;
 
         var path = window.location.pathname.replace(/\/+$/, '');
+        var hash = window.location.hash;
 
         var items = [];
 
         if (isAdmin()) {
             items.push({ label: 'Stok Produk', href: '/Admin.php', id: 'nav-admin-stock', icon: '▤' });
+            // items.push({ label: 'Laporan', href: '/Admin.php#laporan', id: 'nav-admin-report', icon: '▥' });
+        }
+
+        if (isOwner()) {
+            items.push({ label: 'Menu & Harga', href: '/Owner.php', id: 'nav-owner-menu', icon: '◈' });
+            // items.push({ label: 'Laporan', href: '/Owner.php#laporan', id: 'nav-owner-report', icon: '▥' });
         }
 
         items.push(
@@ -188,7 +195,14 @@
 
             a.append(icon, text);
 
-            if (path === item.href) {
+            var parts = item.href.split('#');
+            var itemPath = parts[0];
+            var itemHash = parts[1] ? '#' + parts[1] : '';
+
+            var matches = path === itemPath && (itemHash === '' || hash === itemHash);
+
+            // A bare page link stays active when no hash item claims the URL.
+            if (matches && !(itemHash === '' && hash !== '')) {
                 a.classList.add('is-active');
                 a.setAttribute('aria-current', 'page');
             }

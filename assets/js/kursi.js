@@ -1,7 +1,7 @@
 
 // ── DOM references ─────────────────────────────────────────────────────────
 
-const tables = document.querySelectorAll(".table.available");
+const tables = document.querySelectorAll(".table");
 
 const guestInput = document.getElementById("jumlah-orang");
 const dateInput  = document.getElementById("tanggal");
@@ -18,6 +18,10 @@ const message       = document.getElementById("reservation-message");
 // ── State ──────────────────────────────────────────────────────────────────
 
 let selectedTable = null;
+
+// The table this browser just booked. Reloading occupancy must not clear the
+// session seat for it — the table is occupied precisely because of us.
+let ownSeatId = null;
 
 // ── Restore previous seat selection from session ───────────────────────────
 
@@ -49,6 +53,9 @@ let selectedTable = null;
 
 tables.forEach(function (table) {
     table.addEventListener("click", function () {
+        // Occupied tables are disabled, but guard anyway.
+        if (table.classList.contains("unavailable")) return;
+
         // Remove the previous selection.
         tables.forEach(function (item) {
             item.classList.remove("selected");
@@ -109,7 +116,63 @@ function updateConfirmationButton() {
     }
 }
 
-// ── Confirm reservation → save to session ─────────────────────────────────
+// ── Occupancy ─────────────────────────────────────────────────────────────
+
+/** Paint one table as taken, or back to available. */
+function setOccupied(table, occupied, label) {
+    table.classList.toggle("unavailable", occupied);
+    table.classList.toggle("available", !occupied);
+    table.disabled = occupied;
+
+    let note = table.querySelector("small");
+
+    if (occupied) {
+        if (!note) {
+            note = document.createElement("small");
+            table.appendChild(note);
+        }
+        note.textContent = label || "Terisi";
+        table.classList.remove("selected");
+        table.setAttribute("aria-pressed", "false");
+
+        if (selectedTable && selectedTable.id === table.dataset.table) {
+            selectedTable = null;
+            updateSummary();
+        }
+    } else if (note) {
+        note.remove();
+    }
+}
+
+/** Fetch which tables are currently held and repaint the floor plan. */
+function loadOccupancy() {
+    return fetch("/api/reservasi.php", { credentials: "same-origin" })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (!data || !data.ok) return;
+
+            const taken = data.tables || {};
+
+            tables.forEach(function (table) {
+                const id = table.dataset.table;
+                setOccupied(table, Boolean(taken[id]), taken[id] ? "Terisi" : null);
+            });
+
+            // A seat restored from session may now be gone — unless this
+            // browser is the one holding it.
+            const seat = getSelectedSeat();
+            if (seat && taken[seat.tableId] && seat.tableId !== ownSeatId) {
+                updateSession({ selectedSeat: null });
+            }
+
+            updateSummary();
+        })
+        .catch(function () {
+            // Leave the floor plan as rendered; booking will surface any conflict.
+        });
+}
+
+// ── Confirm reservation → persist, then remember it locally ───────────────
 
 confirmButton.addEventListener("click", function () {
     if (!selectedTable) return;
@@ -125,16 +188,61 @@ confirmButton.addEventListener("click", function () {
         time:     timeInput.value
     };
 
-    // Persist to session.
-    updateSession({ selectedSeat: seatData });
+    confirmButton.disabled = true;
+    message.textContent = "Menyimpan reservasi...";
 
-    // Visual feedback.
-    message.textContent =
-        "✔ Meja " + selectedTable.id + " berhasil dipesan! " +
-        "Anda sekarang dapat memesan makanan.";
+    fetch("/api/reservasi.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+            meja:         seatData.tableId,
+            nama:         (getUser() || {}).nama || "",
+            jumlah_orang: seatData.guests,
+            tanggal:      seatData.date,
+            waktu:        seatData.time
+        })
+    })
+        .then(function (res) {
+            if (res.status === 401) {
+                window.location.href = "/Login.php";
+                return null;
+            }
+            return res.json().then(function (data) {
+                return { status: res.status, data: data };
+            });
+        })
+        .then(function (result) {
+            if (!result) return;
 
-    confirmButton.textContent = "Reservasi Tersimpan ✔";
-    confirmButton.classList.add("is-confirmed");
+            if (!result.data || !result.data.ok) {
+                message.textContent = (result.data && result.data.error) ||
+                    "Reservasi gagal disimpan.";
+                confirmButton.classList.remove("is-confirmed");
+                confirmButton.textContent = "Konfirmasi Reservasi";
+                loadOccupancy();
+                updateConfirmationButton();
+                return;
+            }
+
+            // Persist to session so ordering and the menu banner keep working.
+            ownSeatId = seatData.tableId;
+            updateSession({ selectedSeat: seatData });
+
+            confirmButton.textContent = "Reservasi Tersimpan ✔";
+            confirmButton.classList.add("is-confirmed");
+
+            // Repaint first: updateSummary() clears the message element.
+            loadOccupancy().then(function () {
+                message.textContent =
+                    "✔ Meja " + seatData.tableId + " berhasil dipesan. " +
+                    "Meja tetap terisi sampai admin mengaktifkannya kembali.";
+            });
+        })
+        .catch(function () {
+            message.textContent = "Reservasi gagal disimpan. Silakan coba lagi.";
+            updateConfirmationButton();
+        });
 });
 
 // ── Form change listeners ──────────────────────────────────────────────────
@@ -162,6 +270,8 @@ tables.forEach(function (table) {
         table.setAttribute("aria-pressed", "false");
     }
 });
+
+loadOccupancy();
 
 updateSummary();
 

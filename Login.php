@@ -137,9 +137,11 @@
                         isProfileComplete: isComplete
                     });
 
-                    // Admins land on the console, but only once their profile is complete.
+                    // Staff land on their console once the profile is complete.
                     if (isAdmin) {
                         window.location.href = isComplete ? "/Admin.php" : "/Profile.php";
+                    } else if (userData.role === "owner") {
+                        window.location.href = isComplete ? "/Owner.php" : "/Profile.php";
                     } else {
                         window.location.href = "/Profile.php";
                     }

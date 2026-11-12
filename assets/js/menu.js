@@ -245,6 +245,7 @@ function buildCartArray() {
         if (qty === 0) return;
 
         cart.push({
+            menuId:   Number(item.dataset.menuId),
             name:     item.querySelector("article p:first-of-type").textContent.trim(),
             price:    Number(item.dataset.price),
             quantity: qty
@@ -371,6 +372,50 @@ checkoutButton.addEventListener("click", function () {
     confirmationSection.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
+/**
+ * Download the PDF receipt for one order.
+ *
+ * The PDF arrives base64-encoded inside JSON. Fetching the binary directly
+ * fails in Chromium: it hands fetch() an empty body for PDF responses, which
+ * is what produced zero-byte receipts. Decoding here and building the blob
+ * client-side avoids that path entirely.
+ */
+function downloadReceipt(pesananId) {
+    fetch("/api/receipt.php?id=" + encodeURIComponent(pesananId) + "&format=json", {
+        credentials: "same-origin"
+    })
+        .then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+        })
+        .then(function (data) {
+            if (!data || !data.ok || !data.data) throw new Error("empty");
+
+            const binary = atob(data.data);
+            const bytes = new Uint8Array(binary.length);
+
+            for (let i = 0; i < binary.length; i += 1) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+
+            const blob = new Blob([bytes], { type: data.mime || "application/pdf" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = data.filename || ("struk-nina-rasa-" + pesananId + ".pdf");
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+        })
+        .catch(function () {
+            orderResult.textContent +=
+                " Struk gagal diunduh. Silakan coba lagi.";
+        });
+}
+
 // Return to the menu.
 backToMenuButton.addEventListener("click", function () {
     confirmationSection.hidden = true;
@@ -400,35 +445,73 @@ orderForm.addEventListener("submit", function (event) {
 
     const seat = getSelectedSeat();
 
-    const orderSummary = {
-        customerName: customerName,
-        orderType:    orderType,
-        orderNotes:   orderNotes,
-        items:        buildCartArray(),
-        seat:         seat,
-        orderedAt:    new Date().toISOString()
+    const payload = {
+        nama:    customerName,
+        jenis:   orderType,
+        catatan: orderNotes,
+        meja:    seat ? seat.tableId : '',
+        items:   buildCartArray().map(function (line) {
+            return { menu_id: Number(line.menuId), jumlah: line.quantity };
+        })
     };
 
-    // Save last order to session.
-    updateSession({ lastOrder: orderSummary, cart: [] });
+    orderResult.hidden = false;
+    orderResult.textContent = "Menyimpan pesanan...";
 
-    // Reset quantities in the DOM.
-    menuItems.forEach(function (item) {
-        item.dataset.quantity = "0";
-        updateQuantityControls(item);
-    });
-    updateCart();
+    fetch("/api/orders.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(payload)
+    })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (!data || !data.ok) {
+                orderResult.textContent = (data && data.error) || "Pesanan gagal disimpan.";
+                return;
+            }
 
-    const msg =
-        "✔ Pesanan berhasil dikonfirmasi untuk " + customerName +
-        ". Jenis pesanan: " + orderType +
-        ". Meja: " + (seat ? seat.tableId : "-") + ".";
+            const total = new Intl.NumberFormat("id-ID", {
+                style: "currency", currency: "IDR", maximumFractionDigits: 0
+            }).format(data.order.total);
 
-    orderResult.textContent = msg;
-    orderResult.hidden      = false;
-    confirmationSection.hidden = true;
+            // Save last order to session.
+            updateSession({
+                lastOrder: {
+                    pesananId:    data.order.pesanan_id,
+                    customerName: customerName,
+                    orderType:    orderType,
+                    orderNotes:   orderNotes,
+                    items:        data.order.items,
+                    total:        data.order.total,
+                    seat:         seat,
+                    orderedAt:    new Date().toISOString()
+                },
+                cart: []
+            });
 
-    orderResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            // Reset quantities in the DOM.
+            menuItems.forEach(function (item) {
+                item.dataset.quantity = "0";
+                updateQuantityControls(item);
+            });
+            updateCart();
+
+            orderResult.textContent =
+                "✔ Pesanan #" + data.order.pesanan_id + " tersimpan untuk " + customerName +
+                ". Jenis: " + orderType +
+                ". Meja: " + (seat ? seat.tableId : "-") +
+                ". Total: " + total + ". Struk sedang diunduh.";
+            confirmationSection.hidden = true;
+
+            orderResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+            // Receipt download starts immediately, without leaving the page.
+            downloadReceipt(data.order.pesanan_id);
+        })
+        .catch(function () {
+            orderResult.textContent = "Pesanan gagal disimpan. Silakan coba lagi.";
+        });
 });
 
 // ── Initial render ─────────────────────────────────────────────────────────

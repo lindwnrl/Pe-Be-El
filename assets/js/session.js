@@ -67,6 +67,7 @@ function getSelectedSeat()  { return getSession().selectedSeat; }
 function getCart()          { return getSession().cart || []; }
 function isLoggedIn()       { return !!getSession().user.isLoggedIn; }
 function isAdmin()          { return getSession().user.role === 'admin'; }
+function isOwner()          { return getSession().user.role === 'owner'; }
 function isProfileComplete(){ return !!getSession().isProfileComplete; }
 function hasSeat()          { return !!getSession().selectedSeat; }
 

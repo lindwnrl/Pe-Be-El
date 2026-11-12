@@ -20,6 +20,7 @@ try {
         . 'k.nama_kategori '
         . 'FROM menu m '
         . 'LEFT JOIN kategori_menu k ON k.kategori_id = m.kategori_id '
+        . 'WHERE m.aktif = TRUE '
         . 'ORDER BY m.menu_id'
     )->fetchAll();
 } catch (PDOException $e) {
