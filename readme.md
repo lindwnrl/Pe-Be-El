@@ -20,4 +20,4 @@ Pergantian dari static .html menjadi .php.Juga penambahan autentikasi login dan 
 Re-design tampilan dan perombakan landing page
 
 ## Kamis-November-12
-Penambahan feature add admin dan owner di laman admin dan sedikit polishing untuk final
+Penambahan feature add admin dan owner di laman owner dan sedikit polishing untuk final
